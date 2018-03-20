@@ -2,20 +2,22 @@ import webpack from 'webpack';
 import path from 'path';
 import qs from 'querystring';
 
-process.env.NODE_ENV = process.env.NODE_ENV || "development";
-process.traceDeprecation = true;
+// process.traceDeprecation = true;
+
+const env = process.env.NODE_ENV || 'development';
 
 export default {
   mode: 'development',
-  devtool: '#eval-source-map',
+  // devtool: '#eval-source-map',
   // devtool: false,
-  entry: [
-    'webpack-hot-middleware/client',
-    './client/app.jsx'
-  ],
+  entry: {
+    app : [
+      './client/app.jsx'
+    ].concat(env === 'production' ? [] : 'webpack-hot-middleware/client'),
+  },
   output: {
-    path: __dirname,
-    filename: 'bundle.js',
+    path: path.resolve(__dirname, './dist'),
+    filename: env === 'production' ? '[name]-[hash].js' : '[name].js',
     publicPath: '/'
   },
   plugins: [
@@ -23,6 +25,16 @@ export default {
   ],
   optimization: {
     noEmitOnErrors: true,
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /node_modules/,
+          chunks: "initial",
+          filename: env === 'production' ? "vendor-[chunkhash].js" : 'vendor.js',
+          enforce: true
+        },
+      },
+    },
   },
   resolve: {
     extensions: ['.js', '.jsx'],
@@ -37,22 +49,6 @@ export default {
         test: /\.jsx?$/,
         loader: 'babel-loader',
         include: path.join(__dirname, 'client'),
-        query: {
-          "env": {
-            "development": {
-              "presets": ["react-hmre"],
-              "plugins": [
-                ["react-transform", {
-                  "transforms": [{
-                    "transform": "react-transform-hmr",
-                    "imports": ["react"],
-                    "locals": ["module"]
-                  }]
-                }]
-              ]
-            }
-          },
-        }
       },
 
       // CSS

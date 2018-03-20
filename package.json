@@ -6,7 +6,9 @@
   "author": "Glen Mailer <glen@stainlessed.co.uk>",
   "license": "MIT",
   "scripts": {
-    "start": "babel-node server.js",
+    "dev": "babel-node server.js",
+    "start": "node index.js",
+    "build": "rm -rf dist && webpack-cli --mode production",
     "lint": "eslint ."
   },
   "dependencies": {
@@ -30,6 +32,7 @@
     "prop-types": "^15.6.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-hot-loader": "^4.0.0",
     "react-redux": "^5.0.7",
     "react-transform-hmr": "^1.0.4",
     "redux": "^3.7.2",
@@ -37,5 +40,8 @@
     "webpack": "^4.1.1",
     "webpack-dev-middleware": "^3.0.1",
     "webpack-hot-middleware": "^2.21.2"
+  },
+  "devDependencies": {
+    "webpack-cli": "^2.0.12"
   }
 }

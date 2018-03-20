@@ -1,5 +1,5 @@
 import chokidar from 'chokidar';
-import config from './webpack.config';
+import config from './webpack.config.babel';
 import cssModulesRequireHook from 'css-modules-require-hook';
 import express from 'express';
 import http from 'http';
@@ -53,11 +53,8 @@ compiler.hooks.done.tap('MyReRequirePlugin', function() {
   });
 });
 
-const server = http.createServer(app);
-server.listen(3000, 'localhost', function(err) {
+app.listen(3000, function(err) {
   if (err) throw err;
 
-  const addr = server.address();
-
-  console.log('Listening at http://%s:%d', addr.address, addr.port);
+  console.log('Listening at http://%s:%d', 'localhost', 3000);
 });

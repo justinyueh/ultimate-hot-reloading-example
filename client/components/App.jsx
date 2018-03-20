@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { hot } from 'react-hot-loader';
 
 import styles from './App.css';
-import { connect } from 'react-redux';
 
 class AppComponent extends React.Component {
   render() {
@@ -32,4 +33,4 @@ AppComponent.propTypes = {
 
 const App = connect(state => ({count: state}))(AppComponent);
 
-export default App;
+export default hot(module)(App);
