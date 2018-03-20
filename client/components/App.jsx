@@ -1,12 +1,10 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import styles from './App.css';
 import { connect } from 'react-redux';
 
-const App = connect(state => ({count: state}))(React.createClass({
-  propTypes: {
-    count: React.PropTypes.object.isRequired,
-    dispatch: React.PropTypes.func.isRequired
-  },
+class AppComponent extends React.Component {
   render() {
     const { count, dispatch } = this.props;
     return (
@@ -24,7 +22,14 @@ const App = connect(state => ({count: state}))(React.createClass({
         </p>
       </div>
     );
-  },
-}));
+  }
+}
+
+AppComponent.propTypes = {
+  count: PropTypes.object.isRequired,
+  dispatch: PropTypes.func.isRequired,
+};
+
+const App = connect(state => ({count: state}))(AppComponent);
 
 export default App;

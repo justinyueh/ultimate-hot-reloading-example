@@ -3,12 +3,15 @@ import path from 'path';
 import qs from 'querystring';
 
 process.env.NODE_ENV = process.env.NODE_ENV || "development";
+process.traceDeprecation = true;
 
 export default {
+  mode: 'development',
   devtool: '#eval-source-map',
+  // devtool: false,
   entry: [
     'webpack-hot-middleware/client',
-    './client/app.js'
+    './client/app.jsx'
   ],
   output: {
     path: __dirname,
@@ -16,21 +19,22 @@ export default {
     publicPath: '/'
   },
   plugins: [
-    new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin()
   ],
+  optimization: {
+    noEmitOnErrors: true,
+  },
   resolve: {
-    extensions: ['.js'],
+    extensions: ['.js', '.jsx'],
     alias: {
       request: 'browser-request'
     }
   },
   module: {
-    loaders: [
+    rules: [
       // Javascript
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         loader: 'babel-loader',
         include: path.join(__dirname, 'client'),
         query: {

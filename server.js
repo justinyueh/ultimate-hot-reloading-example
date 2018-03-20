@@ -46,7 +46,7 @@ watcher.on('ready', function() {
 
 // Do "hot-reloading" of react stuff on the server
 // Throw away the cached client modules and let them be re-required next time
-compiler.plugin('done', function() {
+compiler.hooks.done.tap('MyReRequirePlugin', function() {
   console.log("Clearing /client/ module cache from server");
   Object.keys(require.cache).forEach(function(id) {
     if (/[\/\\]client[\/\\]/.test(id)) delete require.cache[id];
