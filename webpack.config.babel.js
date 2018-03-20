@@ -1,6 +1,7 @@
 import webpack from 'webpack';
 import path from 'path';
 import qs from 'querystring';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 // process.traceDeprecation = true;
 
@@ -22,6 +23,10 @@ export default {
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
+    new ExtractTextPlugin({
+      filename: '[name]-[contenthash].css',
+      disable: env !== 'production',
+    }),
   ],
   optimization: {
     noEmitOnErrors: true,
@@ -55,13 +60,19 @@ export default {
       {
         test: /\.css$/,
         include: path.join(__dirname, 'client'),
-        loader: 'style-loader!css-loader?' + qs.stringify({
-          modules: true,
-          importLoaders: 1,
-          localIdentName: '[path][name]-[local]'
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [{
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1,
+              modules: true,
+              localIdentName: '[path][name]-[local]',
+              camelCase: true,
+            },
+          }]
         })
       }
-
     ]
   }
 };
