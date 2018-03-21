@@ -4,20 +4,20 @@ import qs from 'querystring';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 // process.traceDeprecation = true;
-
+const baseDir = path.resolve(__dirname, '../..');
 const env = process.env.NODE_ENV || 'development';
 
 export default {
   mode: 'development',
-  // devtool: '#eval-source-map',
-  // devtool: false,
+  context: baseDir,
+  devtool: env === 'production' ? false : '#eval-source-map',
   entry: {
     app : [
-      './client/app.jsx'
+      './src/client/app.jsx'
     ].concat(env === 'production' ? [] : 'webpack-hot-middleware/client'),
   },
   output: {
-    path: path.resolve(__dirname, './dist'),
+    path: path.resolve(__dirname, '../../dist'),
     filename: env === 'production' ? '[name]-[hash].js' : '[name].js',
     publicPath: '/'
   },
@@ -53,13 +53,19 @@ export default {
       {
         test: /\.jsx?$/,
         loader: 'babel-loader',
-        include: path.join(__dirname, 'client'),
+        exclude: [
+          path.resolve(__dirname, '../../node_modules'),
+        ],
+        // include: path.join(__dirname, '../client'),
       },
 
       // CSS
       {
         test: /\.css$/,
-        include: path.join(__dirname, 'client'),
+        exclude: [
+          path.resolve(__dirname, '../../node_modules'),
+        ],
+        // include: path.join(__dirname, 'client'),
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: [{

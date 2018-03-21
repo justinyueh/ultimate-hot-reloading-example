@@ -6,9 +6,12 @@
   "author": "Glen Mailer <glen@stainlessed.co.uk>",
   "license": "MIT",
   "scripts": {
-    "dev": "babel-node server.js",
-    "start": "node index.js",
-    "build": "rm -rf dist && NODE_ENV=production webpack-cli --mode production",
+    "dev": "babel-node src/server/server.js",
+    "start": "node build/server/server.js",
+    "build": "rm -rf dist && rm -rf build && npm run build:client && npm run build:ssr && npm run build:server",
+    "build:client": "NODE_ENV=production webpack-cli --config ./src/webpack/webpack.config.babel.js --mode production",
+    "build:ssr": "NODE_ENV=production webpack-cli --config ./src/webpack/webpack.server.config.babel.js --mode production",
+    "build:server": "babel src --out-dir build --copy-files --ignore client",
     "lint": "eslint ."
   },
   "dependencies": {
@@ -40,7 +43,8 @@
     "style-loader": "^0.20.3",
     "webpack": "^4.1.1",
     "webpack-dev-middleware": "^3.0.1",
-    "webpack-hot-middleware": "^2.21.2"
+    "webpack-hot-middleware": "^2.21.2",
+    "webpack-node-externals": "^1.6.0"
   },
   "devDependencies": {
     "webpack-cli": "^2.0.12"
