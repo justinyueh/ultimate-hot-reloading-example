@@ -8,7 +8,7 @@ import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 
 const app = express();
-const isDev = false;
+const isDev = true;
 let compiler;
 
 if (isDev) {
@@ -43,7 +43,7 @@ if (isDev) {
   // Do "hot-reloading" of express stuff on the server
   // Throw away cached modules and re-require next time
   // Ensure there's no important state in there!
-  const watcher = chokidar.watch('./server');
+  const watcher = chokidar.watch('./');
 
   watcher.on('ready', function() {
     watcher.on('all', function() {

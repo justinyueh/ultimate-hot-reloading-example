@@ -43,9 +43,6 @@ export default {
   },
   resolve: {
     extensions: ['.js', '.jsx'],
-    alias: {
-      request: 'browser-request'
-    }
   },
   module: {
     rules: [
@@ -76,7 +73,7 @@ export default {
               localIdentName: '[path][name]-[local]',
               camelCase: true,
             },
-          }]
+          }, 'postcss-loader'],
         })
       }
     ]

@@ -3,7 +3,7 @@ import configureStore from './store';
 import fs from 'fs';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { renderToString } from 'react-dom/server';
+import { renderToStaticMarkup } from 'react-dom/server';
 
 // eslint-disable-next-line no-sync
 
@@ -27,7 +27,7 @@ function renderApp(path, callback) {
   const store = configureStore();
   const state = store.getState();
 
-  const rendered = renderToString(
+  const rendered = renderToStaticMarkup(
     <Provider store={store}>
       <App />
     </Provider>
