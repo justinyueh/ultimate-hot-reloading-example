@@ -1,5 +1,5 @@
 import chokidar from 'chokidar';
-import config from '../webpack/webpack.config.babel';
+import webpackConfig from '../webpack/webpack.config.babel';
 import cssModulesRequireHook from 'css-modules-require-hook';
 import express from 'express';
 import http from 'http';
@@ -9,9 +9,11 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 
 const app = express();
 const isDev = true;
+let config;
 let compiler;
 
 if (isDev) {
+  config = webpackConfig({ dev: true, ssr: false });
   compiler = webpack(config);
   cssModulesRequireHook({generateScopedName: '[path][name]-[local]'});
 }

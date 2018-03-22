@@ -1,81 +1,105 @@
 import webpack from 'webpack';
 import path from 'path';
-import qs from 'querystring';
+import fs from 'fs';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 // process.traceDeprecation = true;
 const baseDir = path.resolve(__dirname, '../..');
-const env = process.env.NODE_ENV || 'development';
 
-export default {
-  mode: 'development',
-  context: baseDir,
-  devtool: env === 'production' ? false : '#eval-source-map',
-  entry: {
-    app : [
-      './src/client/app.jsx'
-    ].concat(env === 'production' ? [] : 'webpack-hot-middleware/client'),
-  },
-  output: {
-    path: path.resolve(__dirname, '../../dist'),
-    filename: env === 'production' ? '[name]-[hash].js' : '[name].js',
-    publicPath: '/'
-  },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new ExtractTextPlugin({
-      filename: '[name]-[contenthash].css',
-      disable: env !== 'production',
-    }),
-  ],
-  optimization: {
-    noEmitOnErrors: true,
-    splitChunks: {
-      cacheGroups: {
-        vendor: {
-          test: /node_modules/,
-          chunks: "initial",
-          filename: env === 'production' ? "vendor-[chunkhash].js" : 'vendor.js',
-          enforce: true
+class ManifestPlugin {
+  apply(compiler) {
+    compiler.hooks.done.tap('ManifestPlugin', function(stats) {
+      const statsJson = stats.toJson();
+      const { assetsByChunkName, modules } = statsJson;
+
+      modules.forEach((module) => {
+        if (module.assets && module.assets.length) {
+          [assetsByChunkName[module.name]] = module.assets;
+        }
+      });
+      console.log(path.resolve(baseDir, './manifest.json'));
+      fs.mkdir(path.resolve(baseDir, './build/'), () => {
+        fs.writeFileSync(
+          path.resolve(baseDir, './build/manifest.json'),
+          JSON.stringify(assetsByChunkName, null, 2),
+        );
+      });
+    });
+  }
+}
+
+export default ({ dev, ssr }) => {
+  return {
+    mode: dev ? 'development' : 'production',
+    context: baseDir,
+    devtool: !dev ? false : '#eval-source-map',
+    entry: {
+      app : [
+        './src/client/app.jsx'
+      ].concat(!dev ? [] : 'webpack-hot-middleware/client'),
+    },
+    output: {
+      path: path.resolve(__dirname, '../../dist'),
+      filename: !dev ? '[name]-[hash].js' : '[name].js',
+      publicPath: '/'
+    },
+    plugins: [
+      new ExtractTextPlugin({
+        filename: '[name]-[contenthash].css',
+        disable: dev,
+      }),
+    ]
+      .concat((!dev && !ssr) ? new ManifestPlugin() : [])
+      .concat(dev ? new webpack.HotModuleReplacementPlugin() : []),
+    optimization: {
+      noEmitOnErrors: true,
+      splitChunks: {
+        cacheGroups: {
+          vendor: {
+            test: /node_modules/,
+            chunks: "initial",
+            filename: !dev ? "vendor-[chunkhash].js" : 'vendor.js',
+            enforce: true
+          },
         },
       },
     },
-  },
-  resolve: {
-    extensions: ['.js', '.jsx'],
-  },
-  module: {
-    rules: [
-      // Javascript
-      {
-        test: /\.jsx?$/,
-        loader: 'babel-loader',
-        exclude: [
-          path.resolve(__dirname, '../../node_modules'),
-        ],
-        // include: path.join(__dirname, '../client'),
-      },
+    resolve: {
+      extensions: ['.js', '.jsx'],
+    },
+    module: {
+      rules: [
+        // Javascript
+        {
+          test: /\.jsx?$/,
+          loader: 'babel-loader',
+          exclude: [
+            path.resolve(__dirname, '../../node_modules'),
+          ],
+          // include: path.join(__dirname, '../client'),
+        },
 
-      // CSS
-      {
-        test: /\.css$/,
-        exclude: [
-          path.resolve(__dirname, '../../node_modules'),
-        ],
-        // include: path.join(__dirname, 'client'),
-        use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: [{
-            loader: 'css-loader',
-            options: {
-              importLoaders: 1,
-              modules: true,
-              localIdentName: '[path][name]-[local]',
-              camelCase: true,
-            },
-          }, 'postcss-loader'],
-        })
-      }
-    ]
-  }
-};
+        // CSS
+        {
+          test: /\.css$/,
+          exclude: [
+            path.resolve(__dirname, '../../node_modules'),
+          ],
+          // include: path.join(__dirname, 'client'),
+          use: ExtractTextPlugin.extract({
+            fallback: 'style-loader',
+            use: [{
+              loader: 'css-loader',
+              options: {
+                importLoaders: 1,
+                modules: true,
+                localIdentName: '[path][name]-[local]',
+                camelCase: true,
+              },
+            }, 'postcss-loader'],
+          })
+        }
+      ]
+    }
+  };
+}
