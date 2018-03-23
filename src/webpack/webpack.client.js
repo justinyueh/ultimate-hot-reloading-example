@@ -6,7 +6,6 @@ import webpackConfig from './webpack.config.babel';
 
 export default () => {
   return new Promise((resolve) => {
-    console.log('client');
     webpack(webpackConfig({
       dev: false,
       ssr: false,

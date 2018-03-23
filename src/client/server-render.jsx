@@ -1,4 +1,4 @@
-import App from './components/App';
+import Home from './pages/Home';
 import configureStore from './store';
 import fs from 'fs';
 import React from 'react';
@@ -11,25 +11,25 @@ const template = `
 <html>
   <head>
     <title>Sample App</title>
+    <!-- STYLESHEET -->
   </head>
   <body>
     <div id="root"><!-- CONTENT --></div>
     <script type="text/javascript">
       window.initialStoreData = "-- STORES --";
     </script>
-    <script src="/vendor.js"></script>
-    <script src="/app.js"></script>
+    <!-- JAVASCRIPT -->
   </body>
 </html>
 `;
 
-function renderApp(path, callback) {
+function renderApp({ dev, path }, callback) {
   const store = configureStore();
   const state = store.getState();
 
   const rendered = renderToStaticMarkup(
     <Provider store={store}>
-      <App />
+      <Home />
     </Provider>
   );
 

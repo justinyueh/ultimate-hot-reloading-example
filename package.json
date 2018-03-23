@@ -6,10 +6,9 @@
   "author": "Glen Mailer <glen@stainlessed.co.uk>",
   "license": "MIT",
   "scripts": {
-    "dev": "babel-node src/server/server.js",
-    "start": "node build/server/server.js",
-    "build:server": "babel src --out-dir build --copy-files --ignore client",
-    "build": "babel-node src/webpack/build.js && npm run build:server",
+    "dev": "babel-node src/server.js",
+    "start": "babel-node build/server.js",
+    "build": "babel-node src/webpack/build.js",
     "lint": "eslint ."
   },
   "dependencies": {

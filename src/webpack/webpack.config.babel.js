@@ -9,6 +9,7 @@ const baseDir = path.resolve(__dirname, '../..');
 class ManifestPlugin {
   apply(compiler) {
     compiler.hooks.done.tap('ManifestPlugin', function(stats) {
+      
       const statsJson = stats.toJson();
       const { assetsByChunkName, modules } = statsJson;
 
@@ -17,7 +18,7 @@ class ManifestPlugin {
           [assetsByChunkName[module.name]] = module.assets;
         }
       });
-      console.log(path.resolve(baseDir, './manifest.json'));
+
       fs.mkdir(path.resolve(baseDir, './build/'), () => {
         fs.writeFileSync(
           path.resolve(baseDir, './build/manifest.json'),
@@ -37,6 +38,9 @@ export default ({ dev, ssr }) => {
       app : [
         './src/client/app.jsx'
       ].concat(!dev ? [] : 'webpack-hot-middleware/client'),
+      app111 : [
+        './src/client/app111.jsx'
+      ].concat(!dev ? [] : 'webpack-hot-middleware/client'),
     },
     output: {
       path: path.resolve(__dirname, '../../dist'),
@@ -54,10 +58,12 @@ export default ({ dev, ssr }) => {
     optimization: {
       noEmitOnErrors: true,
       splitChunks: {
+        // name: false,
         cacheGroups: {
           vendor: {
             test: /node_modules/,
             chunks: "initial",
+            name: 'vendor',
             filename: !dev ? "vendor-[chunkhash].js" : 'vendor.js',
             enforce: true
           },

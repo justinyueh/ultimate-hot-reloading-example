@@ -11,7 +11,6 @@ export default () => {
   });
 
   return new Promise((resolve) => {
-    console.log('ssr');
     webpack(Object.assign({}, baseConfig, {
       target: 'node',
       entry: {
