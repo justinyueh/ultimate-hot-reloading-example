@@ -56,7 +56,7 @@ export default class Home extends React.Component {
           <a href="/whoami">Server-only route</a>
         </p>
         <Link to="/about?name=about">go to about page</Link>
-        <br>
+        <br />
         <Link to="/1111/about?name=about">go to another about page</Link>
       </Fragment>
     );
