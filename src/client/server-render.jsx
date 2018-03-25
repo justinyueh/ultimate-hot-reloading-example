@@ -1,43 +1,41 @@
-import Home from './pages/Home';
 import configureStore from './store';
 import fs from 'fs';
 import React from 'react';
 import { Provider } from 'react-redux';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { Route } from 'react-router-dom'
 
-// eslint-disable-next-line no-sync
+import reducers from './reducers' // Or wherever you keep your reducers
+import HelloRouter from '../../hello/HelloRouter';
+import HelloPageToString from '../../hello/HelloPageToString';
+import Routes, { routes } from './Routes';
 
-const template = `
-<html>
-  <head>
-    <title>Sample App</title>
-    <!-- STYLESHEET -->
-  </head>
-  <body>
-    <div id="root"><!-- CONTENT --></div>
-    <script type="text/javascript">
-      window.initialStoreData = "-- STORES --";
-    </script>
-    <!-- JAVASCRIPT -->
-  </body>
-</html>
-`;
+export default function serverRender({ ssr, req }) {
+  const preloadState = {
+    count: {
+      number: 10
+    },
+  };
 
-function renderApp({ dev, path }, callback) {
-  const store = configureStore();
-  const state = store.getState();
-
-  const rendered = renderToStaticMarkup(
-    <Provider store={store}>
-      <Home />
-    </Provider>
-  );
-
-  const page = template
-    .replace('<!-- CONTENT -->', rendered)
-    .replace('"-- STORES --"', JSON.stringify(state));
-
-  callback(null, page);
+  return new Promise(resolve => {
+    if (ssr && req) {
+      HelloRouter({
+        ssr,
+        req,
+        preloadState,
+        reducers,
+        Routes,
+        routes,
+      })
+        .then(({ component, store, params }) => {
+          console.log(params);
+          resolve({ page: HelloPageToString(renderToStaticMarkup(component), store.getState()) });
+        })
+        .catch(error => {
+          resolve({ error })
+        });
+    } else {
+      resolve({ page: HelloPageToString('', preloadState) });
+    }
+  });
 }
-
-module.exports = renderApp;

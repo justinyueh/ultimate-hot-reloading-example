@@ -1,19 +1,5 @@
-const initial = {
-  num: 5,
-};
-const handlers = {
-  INC(s) {
-    return {
-      num: s.num + 1
-    };
-  }
-};
-function reducer(state = initial, action) {
-  if (handlers[action.type]) {
-    return handlers[action.type](state);
-  }
+import count from './count';
 
-  return state;
-}
-
-module.exports = reducer;
+export default {
+  count,
+};

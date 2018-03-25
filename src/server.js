@@ -4,7 +4,7 @@ import hello, { setServerRender } from '../hello';
 import webpackConfig from './webpack/webpack.config.babel';
 
 const port = 3000;
-const dev = false;
+const dev = true;
 const ssr = true;
 const staticPath = '/';
 const app = express();
@@ -12,6 +12,10 @@ const app = express();
 hello({ dev, webpackConfig, app, ssr, staticPath });
 
 app.use(express.static('./dist'));
+
+app.use('/favicon.ico', function(req, res, next) {
+  res.send(null);
+});
 
 app.use(function(req, res, next) {
   require('./app')(req, res, next);

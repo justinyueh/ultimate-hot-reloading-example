@@ -4,13 +4,13 @@ import { connect } from 'react-redux';
 import { hot } from 'react-hot-loader';
 import { Link } from 'react-router-dom';
 
-import styles from './Home.css';
+import styles from './About.css';
 
 import { incrementAction } from '../actions/count';
 
 @connect(state => ({ count: state.count }))
 @hot(module)
-export default class Home extends React.Component {
+export default class About extends React.Component {
   static async getInitialProps (dispatch, params) {
     const number = await dispatch(incrementAction(2));
     const numberx = await dispatch(incrementAction(4));
@@ -30,7 +30,7 @@ export default class Home extends React.Component {
 
   componentDidMount() {
     const { dispatch, match: { params } } = this.props;
-    Home.getInitialProps(dispatch, params)
+    About.getInitialProps(dispatch, params)
     .then((number) => {
       dispatch((dispatch, getState) => {
         console.log('number', getState().count.number);
@@ -43,12 +43,12 @@ export default class Home extends React.Component {
 
     return (
       <Fragment>
-        <h1>Home page.</h1>
+        <h1>About page.</h1>
         <p>{count.number}</p>
         <pre>name:{location.search}</pre>
         <button
           className={styles.increment}
-          onClick={() => dispatch(incrementAction())}
+          onClick={() => dispatch(incrementAction(3))}
         >
           +1
         </button>
@@ -56,8 +56,6 @@ export default class Home extends React.Component {
           <a href="/whoami">Server-only route</a>
         </p>
         <Link to="/about?name=about">go to about page</Link>
-        <br>
-        <Link to="/1111/about?name=about">go to another about page</Link>
       </Fragment>
     );
   }

@@ -4,7 +4,6 @@ import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 
-
 let myApp = {
   dev: false,
   app: null,
@@ -135,11 +134,15 @@ export const setServerRender = (path) => {
   // Anything else gets passed to the client app's server rendering
   app.get(path || '*', function(req, res, next) {
     // TODO:: programmically find server render file
-    require(dev ? '../src/client/server-render' : '../build/client/server-render')({
-      dev,
-      path: req.path,
-    }, function(err, page) {
-      if (err) return next(err);
+    require(dev ? '../src/client/server-render' : '../build/client/server-render').default({
+      ssr,
+      req,
+    })
+    .then(function({ page = '', error}) {
+      if (error) {
+        next(error);
+        return;
+      }
 
       const html = page
         .replace('<!-- STYLESHEET -->',
@@ -150,6 +153,9 @@ export const setServerRender = (path) => {
         );
 
       res.send(html);
+    })
+    .catch(err => {
+      next(err);
     });
   });
 
