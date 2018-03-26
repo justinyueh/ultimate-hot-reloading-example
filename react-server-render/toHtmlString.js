@@ -14,7 +14,5 @@ const template = `
 </html>
 `;
 
-export default (string = '', stateObject) => {
-  return template.replace('<!-- CONTENT -->', string)
+export default (string = '', stateObject) => template.replace('<!-- CONTENT -->', string)
   .replace('"-- STORES --"', JSON.stringify(stateObject));
-};

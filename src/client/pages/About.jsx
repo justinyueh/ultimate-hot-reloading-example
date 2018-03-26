@@ -11,12 +11,23 @@ import { incrementAction } from '../actions/count';
 @connect(state => ({ count: state.count }))
 @hot(module)
 export default class About extends React.Component {
-  static async getInitialProps (dispatch, params) {
-    const number = await dispatch(incrementAction(2));
-    const numberx = await dispatch(incrementAction(4));
+  /**
+    * @dispatch store.dispatch
+    * @params params from url '/:id/:name' {id: xxx, name: xxx}
+    * @queryParams params from location.search '/?name=xxx' {name: xxx}
+    */
+  // eslint-disable-next-line no-unused-vars
+  static async getInitialProps(dispatch, params, queryParams) {
+    await dispatch(incrementAction(2));
+    await dispatch(incrementAction(4));
 
-    return numberx;
+    return null;
   }
+
+  /**
+   * whether server render, default true
+   */
+  static CMPSSR = true;
 
   static defaultProps = {
     count: {},
@@ -24,18 +35,22 @@ export default class About extends React.Component {
   }
 
   static propTypes = {
-    count: PropTypes.object.isRequired,
-    dispatch: PropTypes.func.isRequired,
+    location: PropTypes.shape().isRequired,
+    match: PropTypes.shape().isRequired,
+    count: PropTypes.shape(),
+    dispatch: PropTypes.func,
   }
 
   componentDidMount() {
     const { dispatch, match: { params } } = this.props;
-    About.getInitialProps(dispatch, params)
-    .then((number) => {
-      dispatch((dispatch, getState) => {
-        console.log('number', getState().count.number);
+    const queryParams = {};
+
+    About.getInitialProps(dispatch, params, queryParams)
+      .then(() => {
+        dispatch((dispatch1, getState) => {
+          console.log('number', getState().count.number);
+        });
       });
-    });
   }
 
   render() {
@@ -44,8 +59,8 @@ export default class About extends React.Component {
     return (
       <Fragment>
         <h1>About page.</h1>
-        <p>{count.number}</p>
-        <pre>name:{location.search}</pre>
+        <p>Count: {count.number}</p>
+        <pre>name {decodeURIComponent(location.search)}</pre>
         <button
           className={styles.increment}
           onClick={() => dispatch(incrementAction(3))}

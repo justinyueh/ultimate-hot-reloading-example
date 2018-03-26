@@ -3,5 +3,5 @@ module.exports = {
     'postcss-cssnext': {
       browsers: '> 0%',
     },
-  }
-}
+  },
+};

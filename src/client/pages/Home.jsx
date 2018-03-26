@@ -11,11 +11,29 @@ import { incrementAction } from '../actions/count';
 @connect(state => ({ count: state.count }))
 @hot(module)
 export default class Home extends React.Component {
-  static async getInitialProps (dispatch, params) {
-    const number = await dispatch(incrementAction(2));
-    const numberx = await dispatch(incrementAction(4));
+  /**
+    * @dispatch store.dispatch
+    * @params params from url '/:id/:name' {id: xxx, name: xxx}
+    * @queryParams params from location.search '/?name=xxx' {name: xxx}
+    */
+  // eslint-disable-next-line no-unused-vars
+  static async getInitialProps(dispatch, params, queryParams) {
+    await dispatch(incrementAction(2));
+    await dispatch(incrementAction(4));
 
-    return numberx;
+    return null;
+  }
+
+  /**
+   * whether server render, default true
+   */
+  // static CMPSSR = true;
+
+  /**
+   * whether server render cache, default false
+   */
+  static SSRCACHE() {
+    return true;
   }
 
   static defaultProps = {
@@ -24,18 +42,21 @@ export default class Home extends React.Component {
   }
 
   static propTypes = {
-    count: PropTypes.object.isRequired,
-    dispatch: PropTypes.func.isRequired,
+    location: PropTypes.shape().isRequired,
+    match: PropTypes.shape().isRequired,
+    count: PropTypes.shape(),
+    dispatch: PropTypes.func,
   }
 
   componentDidMount() {
     const { dispatch, match: { params } } = this.props;
-    Home.getInitialProps(dispatch, params)
-    .then((number) => {
-      dispatch((dispatch, getState) => {
-        console.log('number', getState().count.number);
+
+    Home.getInitialProps(dispatch, params, {})
+      .then(() => {
+        dispatch((dispatch1, getState) => {
+          console.log('number', getState().count.number);
+        });
       });
-    });
   }
 
   render() {
@@ -45,7 +66,7 @@ export default class Home extends React.Component {
       <Fragment>
         <h1>Home page.</h1>
         <p>{count.number}</p>
-        <pre>name:{location.search}</pre>
+        <pre>{location.search}</pre>
         <button
           className={styles.increment}
           onClick={() => dispatch(incrementAction())}
@@ -57,7 +78,9 @@ export default class Home extends React.Component {
         </p>
         <Link to="/about?name=about">go to about page</Link>
         <br />
-        <Link to="/1111/about?name=about">go to another about page</Link>
+        <Link to="/1111/about?name=你好">go to another about page</Link>
+        <br />
+        <Link to={{ pathname: '/1/about', search: 'name=你好' }}>go to another about page</Link>
       </Fragment>
     );
   }

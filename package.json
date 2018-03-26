@@ -9,7 +9,7 @@
     "dev": "babel-node src/server.js",
     "start": "babel-node build/server.js",
     "build": "babel-node src/webpack/build.js",
-    "lint": "eslint ."
+    "lint": "eslint . --ext .js --ext .jsx"
   },
   "dependencies": {
     "babel-cli": "^6.26.0",
@@ -22,6 +22,7 @@
     "babel-runtime": "^6.26.0",
     "chokidar": "^2.0.3",
     "css-modules-require-hook": "^4.2.3",
+    "debug": "^3.1.0",
     "express": "^4.16.3",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "history": "^4.7.2",
@@ -30,7 +31,6 @@
     "react-dom": "^16.2.0",
     "react-hot-loader": "^4.0.0",
     "react-redux": "^5.0.7",
-    "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-router-redux": "^5.0.0-alpha.9",
     "redux": "^3.7.2",
@@ -48,6 +48,9 @@
     "babel-preset-env": "^1.6.1",
     "css-loader": "^0.28.11",
     "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.7.0",
     "postcss": "^6.0.21",
     "postcss-cssnext": "^3.1.0",

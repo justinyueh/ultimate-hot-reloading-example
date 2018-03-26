@@ -1,41 +1,37 @@
-import configureStore from './store';
-import fs from 'fs';
-import React from 'react';
-import { Provider } from 'react-redux';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { Route } from 'react-router-dom'
 
-import reducers from './reducers' // Or wherever you keep your reducers
-import HelloRouter from '../../hello/HelloRouter';
-import HelloPageToString from '../../hello/HelloPageToString';
+import reducers from './reducers'; // Or wherever you keep your reducers
+import getRootComponent from '../../react-server-render/getRootComponent';
+import toHtmlString from '../../react-server-render/toHtmlString';
 import Routes, { routes } from './Routes';
 
 export default function serverRender({ ssr, req }) {
-  const preloadState = {
-    count: {
-      number: 10
-    },
-  };
+  const preloadState = {};
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     if (ssr && req) {
-      HelloRouter({
+      getRootComponent({
         ssr,
         req,
-        preloadState,
         reducers,
         Routes,
         routes,
       })
-        .then(({ component, store, params }) => {
-          console.log(params);
-          resolve({ page: HelloPageToString(renderToStaticMarkup(component), store.getState()) });
+        .then(({
+          component, store, CMPSSR,
+        }) => {
+          resolve({
+            page: toHtmlString(
+              CMPSSR ? renderToStaticMarkup(component) : '',
+              store.getState(),
+            ),
+          });
         })
-        .catch(error => {
-          resolve({ error })
+        .catch((error) => {
+          resolve({ error });
         });
     } else {
-      resolve({ page: HelloPageToString('', preloadState) });
+      resolve({ page: toHtmlString('', preloadState) });
     }
   });
 }
