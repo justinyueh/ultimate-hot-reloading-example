@@ -16,7 +16,7 @@ const dev = true;
 const ssr = true;
 
 // 静态资源前缀，包括域名和path
-const staticPath = '/';
+const staticPath = '/assets/';
 const app = express();
 
 ReactServerRender({
@@ -27,7 +27,7 @@ ReactServerRender({
   staticPath,
 });
 
-app.use(express.static('./dist'));
+app.use(express.static('./dist/'));
 
 app.use('/favicon.ico', (req, res) => {
   res.send(null);

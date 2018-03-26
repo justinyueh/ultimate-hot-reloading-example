@@ -5,7 +5,6 @@ import getRootComponent from '../../react-server-render/getRootComponent';
 import Routes, { routes } from './Routes';
 
 getRootComponent({
-  preloadState: window.preloadState,
   reducers,
   Routes,
   routes,

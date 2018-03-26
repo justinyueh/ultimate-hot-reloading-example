@@ -9,6 +9,10 @@ import { StaticRouter, matchPath } from 'react-router-dom';
 
 import { ConnectedRouter, routerReducer, routerMiddleware } from 'react-router-redux';
 
+import qs from 'querystring';
+import axios from 'axios';
+
+
 // Now you can dispatch navigation actions from anywhere!
 // store.dispatch(push('/foo'))
 
@@ -49,7 +53,6 @@ function getInitialProps(component, dispatch, params, queryParams) {
 export default async ({
   ssr,
   req,
-  preloadState = {},
   reducers,
   Routes,
   routes,
@@ -59,7 +62,6 @@ export default async ({
       ...reducers,
       router: routerReducer,
     }),
-    preloadState,
   ];
 
   if (ssr) {
@@ -89,6 +91,18 @@ export default async ({
       store,
       params,
     };
+  }
+
+  const { location } = window;
+  const query = qs.decode(location.search.replace(/^\?/, ''));
+
+  query.SSR_JSON = true;
+
+  try {
+    const response = await axios.get(`${location.origin}${location.pathname}?${qs.encode(query)}`);
+    storeParams.push(response.data);
+  } catch (error) {
+    console.error(error);
   }
 
   // Create a history of your choosing (we're using a browser history in this case)

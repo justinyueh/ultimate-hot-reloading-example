@@ -1,11 +1,18 @@
+import path from 'path';
 import chokidar from 'chokidar';
 import cssModulesRequireHook from 'css-modules-require-hook';
 import webpack from 'webpack';
+import { renderToStaticMarkup } from 'react-dom/server';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import debug from 'debug';
 
+import getRootComponent from './getRootComponent';
+import toHtmlString from './toHtmlString';
+import { getGenerateScopedName } from './WebpackConfigCreator';
+
 const log = debug('ssr');
+const cwd = process.cwd();
 
 const myApp = {
   dev: false,
@@ -45,7 +52,8 @@ export default ({
   if (dev) {
     myApp.config = webpackConfig({ dev: true, ssr: false });
     myApp.compiler = webpack(myApp.config);
-    cssModulesRequireHook({ generateScopedName: '[path][name]-[local]' });
+    // The require hook compiles CSS Modules in runtime
+    cssModulesRequireHook({ generateScopedName: getGenerateScopedName(dev) });
   }
 
   setExpress();
@@ -95,40 +103,72 @@ export const getCss = (name) => {
   return '';
 };
 
-export const ReactServerRenderRouter = (path = null, entry = 'app') => {
+export const ReactServerRenderRouter = (pathname = null, entry = 'app') => {
   const {
     dev, app, ssr,
   } = myApp;
 
   // Anything else gets passed to the client app's server rendering
-  app.get(path || '*', (req, res, next) => {
+  app.get(pathname || '*', (req, res, next) => {
     // TODO:: programmically find server render file
     // eslint-disable-next-line
-    require(dev ? '../src/client/server-render' : '../build/client/server-render').default({
-      ssr,
-      req,
-    })
-      .then(({ page = '', error }) => {
-        if (error) {
-          next(error);
-          return;
-        }
+    const { reducers, Routes, routes } = require(dev ? path.resolve(cwd, './src/client/server-render') : path.resolve(cwd, './build/client/server-render'));
 
-        const html = page
-          .replace(
-            '<!-- STYLESHEET -->',
-            getCss('vendor') + getCss(entry),
-          )
-          .replace(
-            '<!-- JAVASCRIPT -->',
-            getScript('vendor') + getScript(entry),
-          );
+    let html = '';
+    let page = '';
 
-        res.send(html);
+    if (ssr && req) {
+      getRootComponent({
+        ssr,
+        req,
+        reducers,
+        Routes,
+        routes,
       })
-      .catch((err) => {
-        next(err);
-      });
+        .then(({
+          component, store, CMPSSR,
+        }) => {
+          const preloadState = store.getState();
+
+          if (req.query.SSR_JSON) {
+            res.json(preloadState);
+            return;
+          }
+
+          page = toHtmlString(CMPSSR ? renderToStaticMarkup(component) : '');
+
+          html = page
+            .replace(
+              '<!-- STYLESHEET -->',
+              getCss('vendor') + getCss(entry),
+            )
+            .replace(
+              '<!-- JAVASCRIPT -->',
+              getScript('vendor') + getScript(entry),
+            );
+
+          res.send(html);
+        })
+        .catch((error) => {
+          next(error);
+        });
+    } else if (req && req.query.SSR_JSON) {
+      res.json({});
+    } else {
+      page = toHtmlString();
+
+      html = page
+        .replace(
+          '<!-- STYLESHEET -->',
+          getCss('vendor') + getCss(entry),
+        )
+        .replace(
+          '<!-- JAVASCRIPT -->',
+          getScript('vendor') + getScript(entry),
+        );
+
+      res.send(html);
+    }
   });
 };
 
@@ -138,7 +178,6 @@ export const ReactServerRenderWatch = () => {
   } = myApp;
 
   if (dev) {
-    const cwd = process.cwd();
     // Do "hot-reloading" of express stuff on the server
     // Throw away cached modules and re-require next time
     // Ensure there's no important state in there!
@@ -147,12 +186,12 @@ export const ReactServerRenderWatch = () => {
     });
 
     watcher.on('ready', () => {
-      watcher.on('all', (event, path) => {
-        if (!/^src[/\\]client/.test(path)) {
-          log(`Clearing ${path} module cache from server`);
+      watcher.on('all', (event, pathname) => {
+        if (!/^src[/\\]client/.test(pathname)) {
+          log(`Clearing ${pathname} module cache from server`);
 
-          delete require.cache[`${cwd}/${path}`];
-          delete require.cache[`${cwd}\${path}`];
+          delete require.cache[`${cwd}/${pathname}`];
+          delete require.cache[`${cwd}\${pathname}`];
         }
       });
     });

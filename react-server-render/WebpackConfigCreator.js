@@ -7,6 +7,8 @@ import ManifestPlugin from './ManifestPlugin';
 // process.traceDeprecation = true;
 const cwd = process.cwd();
 
+export const getGenerateScopedName = dev => (dev ? '[path][name]-[local]-[hash:base64:5]' : '[hash:base64:5]');
+
 export default class WebpackConfigCreator {
   constructor(webpackConfig) {
     this.userConfig = webpackConfig;
@@ -67,9 +69,9 @@ export default class WebpackConfigCreator {
       //   ].concat(!dev ? [] : 'webpack-hot-middleware/client'),
       // },
       output: {
-        path: path.resolve(cwd, './dist'),
+        path: path.resolve(cwd, './dist/assets/'),
         filename: !dev ? '[name]-[hash].js' : '[name].js',
-        publicPath: '/',
+        publicPath: '/assets/',
       },
       plugins: [
         new ExtractTextPlugin({
@@ -123,7 +125,7 @@ export default class WebpackConfigCreator {
                 options: {
                   importLoaders: 1,
                   modules: true,
-                  localIdentName: '[path][name]-[local]',
+                  localIdentName: getGenerateScopedName(dev),
                   camelCase: true,
                 },
               }, 'postcss-loader'],
