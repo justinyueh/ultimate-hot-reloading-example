@@ -1,6 +1,6 @@
 import remove from 'remove';
 import path from 'path';
-import { exec } from 'child_process';
+import { exec, spawn } from 'child_process';
 
 import buildClient from './build.client';
 import buildServerRender from './build.server.render';
@@ -20,7 +20,7 @@ export default async function build(webpackConfig) {
     await buildClient(webpackConfig);
   } catch (e) {
     console.error(e);
-    process.exit();
+    process.exit(1);
   }
   console.timeEnd('client build');
 
@@ -29,16 +29,36 @@ export default async function build(webpackConfig) {
     await buildServerRender(webpackConfig);
   } catch (e) {
     console.error(e);
-    process.exit();
+    process.exit(1);
   }
   console.timeEnd('ssr build');
 
   console.time('babel build');
-  exec('babel src --out-dir build --copy-files --ignore client --colors', (err) => {
-    if (err) {
-      console.error(err);
-      process.exit();
-    }
+
+  const args = [
+    `${cwd}/node_modules/.bin/babel`,
+    'src',
+    '--out-dir',
+    'build',
+    '--copy-files',
+    '--ignore',
+    'client',
+    '--presets=env',
+    '--colors'
+  ];
+
+  var proc = spawn(process.argv[0], args, {
+    stdio: ['pipe', 'pipe', process.stderr],
+  });
+
+  proc.on("exit", function (code, signal) {
+    process.on("exit", function () {
+      if (signal) {
+        process.kill(process.pid, signal);
+      } else {
+        process.exit(code);
+      }
+    });
     console.timeEnd('babel build');
     console.timeEnd('total build');
   });

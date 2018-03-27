@@ -6,3 +6,16 @@
     border-radius: 3px;
     background-color: green;
 }
+
+.square {
+  width: 200px;
+  height: 160px;
+  background-image: url(./img.png);
+}
+
+.square::before {
+  content: 'backgroud img';
+  color: #fff;
+  padding: 5px 0 0 10px;
+  display: block;
+}

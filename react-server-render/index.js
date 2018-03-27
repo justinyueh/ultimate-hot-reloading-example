@@ -1,6 +1,7 @@
 import path from 'path';
 import chokidar from 'chokidar';
 import cssModulesRequireHook from 'css-modules-require-hook';
+import assetRequireHook from 'asset-require-hook';
 import webpack from 'webpack';
 import { renderToStaticMarkup } from 'react-dom/server';
 import webpackDevMiddleware from 'webpack-dev-middleware';
@@ -9,7 +10,11 @@ import debug from 'debug';
 
 import getRootComponent from './getRootComponent';
 import toHtmlString from './toHtmlString';
-import { getGenerateScopedName } from './WebpackConfigCreator';
+import {
+  outputPublicPath,
+  getGenerateScopedName,
+  fileLoaderName,
+} from './config';
 
 const log = debug('ssr');
 const cwd = process.cwd();
@@ -17,7 +22,6 @@ const cwd = process.cwd();
 const myApp = {
   dev: false,
   app: null,
-  config: null,
   compiler: null,
   ssr: false,
   staticPath: '/',
@@ -25,13 +29,14 @@ const myApp = {
 
 export const setExpress = () => {
   const {
-    dev, config, compiler, app,
+    dev, compiler, app,
   } = myApp;
 
   if (dev) {
     // Serve hot-reloading bundle to client
     app.use(webpackDevMiddleware(compiler, {
-      noInfo: true, publicPath: config.output.publicPath,
+      noInfo: true,
+      publicPath: outputPublicPath,
     }));
     app.use(webpackHotMiddleware(compiler));
   }
@@ -50,10 +55,14 @@ export default ({
   myApp.staticPath = staticPath;
 
   if (dev) {
-    myApp.config = webpackConfig({ dev: true, ssr: false });
-    myApp.compiler = webpack(myApp.config);
+    myApp.compiler = webpack(webpackConfig({ dev: true, ssr: false }));
     // The require hook compiles CSS Modules in runtime
     cssModulesRequireHook({ generateScopedName: getGenerateScopedName(dev) });
+    assetRequireHook({
+      extensions: ['png', 'jpg', 'jpeg'],
+      name: fileLoaderName,
+      publicPath: outputPublicPath,
+    })
   }
 
   setExpress();
@@ -202,7 +211,7 @@ export const ReactServerRenderWatch = () => {
       compiler.hooks.done.tap('MyReRequirePlugin', () => {
         log('Clearing /client/ module cache from server');
         Object.keys(require.cache).forEach((id) => {
-          if (/[/\\]client[/\\]/.test(id)) {
+          if (/src[/\\]client[/\\]/.test(id)) {
             delete require.cache[id];
           }
         });

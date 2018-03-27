@@ -8,6 +8,8 @@ import styles from './Home.css';
 
 import { incrementAction } from '../actions/count';
 
+import img from './img.png';
+
 @connect(state => ({ count: state.count }))
 @hot(module)
 export default class Home extends React.Component {
@@ -81,6 +83,10 @@ export default class Home extends React.Component {
         <Link to="/1111/about?name=你好">go to another about page</Link>
         <br />
         <Link to={{ pathname: '/1/about', search: 'name=你好' }}>go to another about page</Link>
+        <div className={styles.square}></div>
+        <div>
+          <img src={img} alt="img" />
+        </div>
       </Fragment>
     );
   }

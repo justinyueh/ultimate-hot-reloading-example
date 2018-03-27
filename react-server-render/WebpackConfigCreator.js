@@ -3,11 +3,15 @@ import path from 'path';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 import ManifestPlugin from './ManifestPlugin';
+import {
+  outputPublicPath,
+  getGenerateScopedName,
+  getGenerateOutputFileName,
+  fileLoaderName,
+} from './config';
 
 // process.traceDeprecation = true;
 const cwd = process.cwd();
-
-export const getGenerateScopedName = dev => (dev ? '[path][name]-[local]-[hash:base64:5]' : '[hash:base64:5]');
 
 export default class WebpackConfigCreator {
   constructor(webpackConfig) {
@@ -26,14 +30,14 @@ export default class WebpackConfigCreator {
     }
 
     console.error(new Error('Illegal entry type'));
-    process.exit();
+    process.exit(1);
     return null;
   }
 
   static createEntrys(config, dev) {
     if (!config.entry) {
       console.error(new Error('You should have a webpack entry point'));
-      process.exit();
+      process.exit(1);
     }
 
     if (typeof config.entry === 'string') {
@@ -51,7 +55,7 @@ export default class WebpackConfigCreator {
     }
 
     console.error(new Error('Illegal entry type'));
-    process.exit();
+    process.exit(1);
     return null;
   }
 
@@ -70,8 +74,8 @@ export default class WebpackConfigCreator {
       // },
       output: {
         path: path.resolve(cwd, './dist/assets/'),
-        filename: !dev ? '[name]-[hash].js' : '[name].js',
-        publicPath: '/assets/',
+        filename: getGenerateOutputFileName(dev),
+        publicPath: outputPublicPath,
       },
       plugins: [
         new ExtractTextPlugin({
@@ -104,10 +108,23 @@ export default class WebpackConfigCreator {
           // Javascript
           {
             test: /\.jsx?$/,
-            loader: 'babel-loader',
+            // loader: 'babel-loader',
             exclude: [
               path.resolve(cwd, './node_modules'),
             ],
+            use: {
+              loader: 'babel-loader',
+              options: {
+                presets: ['env', 'react'],
+                plugins: [
+                  'transform-class-properties',
+                  'transform-decorators-legacy',
+                  'transform-object-rest-spread',
+                  'transform-runtime',
+                  'react-hot-loader/babel'
+                ],
+              },
+            },
             // include: path.join(__dirname, '../client'),
           },
 
@@ -131,6 +148,13 @@ export default class WebpackConfigCreator {
               }, 'postcss-loader'],
             }),
           },
+          {
+            test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|eot|ttf)(\?(v|t)=(\d+|[0-9]\.[0-9]\.[0-9]))?$/,
+            loader: 'file-loader',
+            options: {
+              name: fileLoaderName,
+            },
+          },
         ],
       },
     };
@@ -140,4 +164,3 @@ export default class WebpackConfigCreator {
     return defaultConfig;
   }
 }
-
