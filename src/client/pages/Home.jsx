@@ -83,7 +83,7 @@ export default class Home extends React.Component {
         <Link to="/1111/about?name=你好">go to another about page</Link>
         <br />
         <Link to={{ pathname: '/1/about', search: 'name=你好' }}>go to another about page</Link>
-        <div className={styles.square}></div>
+        <div className={styles.square} />
         <div>
           <img src={img} alt="img" />
         </div>

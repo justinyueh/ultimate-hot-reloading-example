@@ -121,7 +121,7 @@ export default class WebpackConfigCreator {
                   'transform-decorators-legacy',
                   'transform-object-rest-spread',
                   'transform-runtime',
-                  'react-hot-loader/babel'
+                  'react-hot-loader/babel',
                 ],
               },
             },

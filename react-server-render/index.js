@@ -62,7 +62,7 @@ export default ({
       extensions: ['png', 'jpg', 'jpeg'],
       name: fileLoaderName,
       publicPath: outputPublicPath,
-    })
+    });
   }
 
   setExpress();

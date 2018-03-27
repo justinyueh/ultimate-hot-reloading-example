@@ -9,10 +9,11 @@
     "dev": "babel-node --presets=env,react --plugins=transform-class-properties,transform-decorators-legacy,transform-object-rest-spread,transform-runtime,react-hot-loader/babel src/server.js",
     "start": "babel-node build/server.js",
     "build": "babel-node --presets=env src/webpack/build.js",
+    "lint": "eslint . --ext .js --ext .jsx",
     "dev-sh": "fdd-dev src/server.js",
     "start-sh": "fdd-start build/server.js",
     "build-sh": "fdd-build src/webpack/build.js",
-    "lint": "eslint . --ext .js --ext .jsx"
+    "lint-sh": "fdd-lint"
   },
   "dependencies": {
     "asset-require-hook": "^1.2.0",

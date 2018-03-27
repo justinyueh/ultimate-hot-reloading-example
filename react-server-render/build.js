@@ -1,6 +1,6 @@
 import remove from 'remove';
 import path from 'path';
-import { exec, spawn } from 'child_process';
+import { spawn } from 'child_process';
 
 import buildClient from './build.client';
 import buildServerRender from './build.server.render';
@@ -44,15 +44,15 @@ export default async function build(webpackConfig) {
     '--ignore',
     'client',
     '--presets=env',
-    '--colors'
+    '--colors',
   ];
 
-  var proc = spawn(process.argv[0], args, {
+  const proc = spawn(process.argv[0], args, {
     stdio: ['pipe', 'pipe', process.stderr],
   });
 
-  proc.on("exit", function (code, signal) {
-    process.on("exit", function () {
+  proc.on('exit', (code, signal) => {
+    process.on('exit', () => {
       if (signal) {
         process.kill(process.pid, signal);
       } else {
