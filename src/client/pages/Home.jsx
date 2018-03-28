@@ -7,6 +7,10 @@ import { Link } from 'react-router-dom';
 import styles from './Home.css';
 
 import { incrementAction } from '../actions/count';
+import {
+  getHeaderAction,
+  getFooterAction,
+} from '../actions/html';
 
 import img from './img.png';
 
@@ -20,6 +24,8 @@ export default class Home extends React.Component {
     */
   // eslint-disable-next-line no-unused-vars
   static async getInitialProps(dispatch, params, queryParams) {
+    await dispatch(getHeaderAction());
+    await dispatch(getFooterAction());
     await dispatch(incrementAction(2));
     await dispatch(incrementAction(4));
 

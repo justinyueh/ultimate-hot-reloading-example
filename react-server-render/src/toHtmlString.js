@@ -1,11 +1,15 @@
 const template = `
 <html>
   <head>
-    <title>Sample App</title>
+    <title><!-- TITLE --></title>
+    <!-- META -->
+    <!-- LINK -->
     <!-- STYLESHEET -->
   </head>
   <body>
+    <!-- HEADERHTML -->
     <div id="root"><!-- CONTENT --></div>
+    <!-- FOOTERHTML -->
     <!-- JAVASCRIPT -->
   </body>
 </html>

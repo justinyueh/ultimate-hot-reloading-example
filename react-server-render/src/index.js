@@ -143,7 +143,19 @@ export const ReactServerRenderRouter = (pathname = null, entry = 'app') => {
         }) => {
           const preloadState = store.getState();
 
+          const titleString = preloadState.html ? preloadState.html.title : '';
+          const metaString = preloadState.html ? preloadState.html.meta : '';
+          const linkString = preloadState.html ? preloadState.html.link : '';
+          const headerString = preloadState.html ? preloadState.html.header : '';
+          const footerString = preloadState.html ? preloadState.html.footer : '';
+
           if (req.query.SSR_JSON) {
+            if (preloadState.html && preloadState.html.title) {
+              preloadState.html = { title: preloadState.html.title };
+            } else {
+              preloadState.html = {};
+            }
+
             res.json(preloadState);
             return;
           }
@@ -151,6 +163,26 @@ export const ReactServerRenderRouter = (pathname = null, entry = 'app') => {
           page = toHtmlString(CMPSSR ? renderToStaticMarkup(component) : '');
 
           html = page
+            .replace(
+              '<!-- TITLE -->',
+              titleString || '',
+            )
+            .replace(
+              '<!-- META -->',
+              metaString || '',
+            )
+            .replace(
+              '<!-- LINK -->',
+              linkString || '',
+            )
+            .replace(
+              '<!-- HEADERHTML -->',
+              headerString || '',
+            )
+            .replace(
+              '<!-- FOOTERHTML -->',
+              footerString || '',
+            )
             .replace(
               '<!-- STYLESHEET -->',
               getCss('vendor') + getCss(entry),
@@ -171,6 +203,26 @@ export const ReactServerRenderRouter = (pathname = null, entry = 'app') => {
       page = toHtmlString();
 
       html = page
+        .replace(
+          '<!-- TITLE -->',
+          '',
+        )
+        .replace(
+          '<!-- META -->',
+          '',
+        )
+        .replace(
+          '<!-- LINK -->',
+          '',
+        )
+        .replace(
+          '<!-- HEADERHTML -->',
+          '',
+        )
+        .replace(
+          '<!-- FOOTERHTML -->',
+          '',
+        )
         .replace(
           '<!-- STYLESHEET -->',
           getCss('vendor') + getCss(entry),
