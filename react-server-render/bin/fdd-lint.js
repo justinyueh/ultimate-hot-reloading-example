@@ -1,18 +1,18 @@
 #!/usr/bin/env node
+const path = require('path');
 const childProcess = require('child_process');
 const program = require('commander');
-const path = require('path');
 
 program.parse(process.argv);
 
 const cwd = process.cwd();
 
 const parsedArgs = [
-  `${cwd}/node_modules/eslint/bin/eslint`,
+  path.resolve(cwd, './node_modules/eslint/bin/eslint'),
   '--config',
-  path.join(__dirname, '../eslintrc.json'),
+  path.join(__dirname, '../lib/eslintrc.json'),
   '--ignore-path',
-  path.join(__dirname, '../.eslintignore'),
+  path.join(__dirname, '../lib/eslintignore'),
   '--ext',
   '.js',
   '--ext',

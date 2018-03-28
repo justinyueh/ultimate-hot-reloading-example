@@ -10,10 +10,11 @@
     "start": "babel-node build/server.js",
     "build": "babel-node --presets=env src/webpack/build.js",
     "lint": "eslint . --ext .js --ext .jsx",
-    "dev-sh": "fdd-dev src/server.js",
-    "start-sh": "fdd-start build/server.js",
-    "build-sh": "fdd-build src/webpack/build.js",
-    "lint-sh": "fdd-lint"
+    "fdd-dev": "fdd-dev",
+    "fdd-start": "fdd-start",
+    "fdd-build": "fdd-build",
+    "fdd-lint": "fdd-lint",
+    "rsr": "babel react-server-render/src --out-dir react-server-render/lib  --presets=env,react --plugins=transform-class-properties,transform-decorators-legacy,transform-object-rest-spread,transform-runtime --copy-files --watch"
   },
   "dependencies": {
     "asset-require-hook": "^1.2.0",

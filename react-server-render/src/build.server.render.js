@@ -4,8 +4,8 @@ import nodeExternals from 'webpack-node-externals';
 
 const cwd = process.cwd();
 
-export default (webpackConfig) => {
-  const baseConfig = webpackConfig({
+export default (getWebpackConfig) => {
+  const baseConfig = getWebpackConfig({
     dev: false,
     ssr: true,
   });
@@ -14,13 +14,16 @@ export default (webpackConfig) => {
     webpack(Object.assign({}, baseConfig, {
       target: 'node',
       entry: {
-        ssr: [
-          './src/client/server-render.jsx',
+        reducers: [
+          path.resolve(cwd, './src/client/reducers/index.js'),
+        ],
+        routes: [
+          path.resolve(cwd, './src/client/routes.jsx'),
         ],
       },
       output: Object.assign({}, baseConfig.output, {
         path: path.resolve(cwd, './build/client'),
-        filename: 'server-render.js',
+        filename: '[name].js',
         libraryTarget: 'commonjs2',
       }),
       externals: [nodeExternals()],

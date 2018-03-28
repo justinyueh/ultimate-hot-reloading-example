@@ -17,7 +17,7 @@ export default class WebpackConfigCreator {
   constructor(webpackConfig) {
     this.userConfig = webpackConfig;
 
-    this.webpackConfig = (...params) => this.createWebpackConfig(...params);
+    this.getWebpackConfig = (...params) => this.createWebpackConfig(...params);
   }
 
   static createEntry(entry, dev) {

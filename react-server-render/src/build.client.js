@@ -1,7 +1,7 @@
 import webpack from 'webpack';
 
-export default webpackConfig => new Promise((resolve, reject) => {
-  webpack(webpackConfig({
+export default getWebpackConfig => new Promise((resolve, reject) => {
+  webpack(getWebpackConfig({
     dev: false,
     ssr: false,
   }))

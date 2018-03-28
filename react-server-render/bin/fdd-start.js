@@ -1,21 +1,8 @@
 #!/usr/bin/env node
 const childProcess = require('child_process');
-const program = require('commander');
-
-program.parse(process.argv);
-
-const { args } = program;
-
-if (!args.length) {
-  console.error('No file path found');
-  process.exit(1);
-}
-
-const cwd = process.cwd();
 
 const parsedArgs = [
-  `${cwd}/node_modules/babel-cli/lib/_babel-node`,
-  args[0],
+  'build/server.js',
 ];
 
 const proc = childProcess.spawn(process.argv[0], parsedArgs, {

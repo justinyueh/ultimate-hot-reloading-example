@@ -10,6 +10,8 @@ import debug from 'debug';
 
 import getRootComponent from './getRootComponent';
 import toHtmlString from './toHtmlString';
+import WebpackConfigCreator from './WebpackConfigCreator';
+import getServerRender from './getServerRender';
 import {
   outputPublicPath,
   getGenerateScopedName,
@@ -55,7 +57,8 @@ export default ({
   myApp.staticPath = staticPath;
 
   if (dev) {
-    myApp.compiler = webpack(webpackConfig({ dev: true, ssr: false }));
+    const { getWebpackConfig } = new WebpackConfigCreator(webpackConfig);
+    myApp.compiler = webpack(getWebpackConfig({ dev: true, ssr: false }));
     // The require hook compiles CSS Modules in runtime
     cssModulesRequireHook({ generateScopedName: getGenerateScopedName(dev) });
     assetRequireHook({
@@ -83,7 +86,7 @@ export const getScript = (name) => {
   if (!dev) {
     try {
       // eslint-disable-next-line
-      manifest = require('../build/manifest.json');
+      manifest = require(path.resolve(cwd, './build/manifest.json'));
     } catch (e) { log(e); }
   }
 
@@ -102,7 +105,7 @@ export const getCss = (name) => {
   if (!dev) {
     try {
       // eslint-disable-next-line
-      manifest = require('../build/manifest.json');
+      manifest = require(path.resolve(cwd, './build/manifest.json'));
     } catch (e) { log(e); }
   }
 
@@ -121,7 +124,9 @@ export const ReactServerRenderRouter = (pathname = null, entry = 'app') => {
   app.get(pathname || '*', (req, res, next) => {
     // TODO:: programmically find server render file
     // eslint-disable-next-line
-    const { reducers, Routes, routes } = require(dev ? path.resolve(cwd, './src/client/server-render') : path.resolve(cwd, './build/client/server-render'));
+    // const { reducers, routes } = require(dev ? path.resolve(cwd, './src/client/server-render') : path.resolve(cwd, './build/client/server-render'));
+
+    const { reducers, routes } = getServerRender(dev);
 
     let html = '';
     let page = '';
@@ -131,7 +136,6 @@ export const ReactServerRenderRouter = (pathname = null, entry = 'app') => {
         ssr,
         req,
         reducers,
-        Routes,
         routes,
       })
         .then(({

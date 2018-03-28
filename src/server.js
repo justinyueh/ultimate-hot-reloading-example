@@ -3,9 +3,9 @@ import express from 'express';
 import ReactServerRender, {
   ReactServerRenderRouter,
   ReactServerRenderListen,
-} from '../react-server-render';
+} from '../react-server-render/lib';
 
-import webpackConfig from './webpack/webpack.config';
+import webpackConfig from './webpack.config';
 
 const port = 3000;
 

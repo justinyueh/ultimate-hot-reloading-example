@@ -5,7 +5,7 @@ import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import { Provider } from 'react-redux';
 
 import createHistory from 'history/createBrowserHistory';
-import { StaticRouter, matchPath } from 'react-router-dom';
+import { StaticRouter, matchPath, Route, Switch } from 'react-router-dom';
 
 import { ConnectedRouter, routerReducer, routerMiddleware } from 'react-router-redux';
 
@@ -54,9 +54,17 @@ export default async ({
   ssr,
   req,
   reducers,
-  Routes,
   routes,
 }) => {
+  const Routes = (
+    <Switch>
+      {
+      routes.map(route => (
+        <Route key={route.path} exact path={route.path} component={route.component} />
+      ))
+    }
+    </Switch>
+  );
   const storeParams = [
     combineReducers({
       ...reducers,
