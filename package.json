@@ -10,10 +10,10 @@
     "start": "babel-node build/server.js",
     "build": "babel-node --presets=env src/webpack/build.js",
     "lint": "eslint . --ext .js --ext .jsx",
-    "fdd-dev": "fdd-dev",
-    "fdd-start": "fdd-start",
-    "fdd-build": "fdd-build",
-    "fdd-lint": "fdd-lint",
+    "fdd-dev": "react-server-render/bin/fdd-dev.js",
+    "fdd-start": "react-server-render/bin/fdd-start.js",
+    "fdd-build": "react-server-render/bin/fdd-build.js",
+    "fdd-lint": "react-server-render/bin/fdd-lint.js",
     "rsr": "babel react-server-render/src --out-dir react-server-render/lib  --presets=env,react --plugins=transform-class-properties,transform-decorators-legacy,transform-object-rest-spread,transform-runtime --copy-files --watch"
   },
   "dependencies": {
@@ -51,6 +51,8 @@
     "webpack-node-externals": "^1.6.0"
   },
   "devDependencies": {
+    "babel-plugin-dynamic-import-node": "^1.2.0",
+    "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
@@ -68,8 +70,9 @@
     "style-loader": "^0.20.3"
   },
   "bin": {
-    "fdd-dev": "./react-server-render/bin/fdd-dev.js",
-    "fdd-start": "./react-server-render/bin/fdd-start.js",
-    "fdd-build": "./react-server-render/bin/fdd-build.js"
+    "fdd-dev": "react-server-render/bin/fdd-dev.js",
+    "fdd-start": "react-server-render/bin/fdd-start.js",
+    "fdd-build": "react-server-render/bin/fdd-build.js",
+    "fdd-lint": "react-server-render/bin/fdd-lint.js"
   }
 }

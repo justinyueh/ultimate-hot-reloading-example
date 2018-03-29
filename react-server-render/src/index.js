@@ -9,9 +9,9 @@ import webpackHotMiddleware from 'webpack-hot-middleware';
 import debug from 'debug';
 
 import getRootComponent from './getRootComponent';
-import toHtmlString from './toHtmlString';
+import toHtmlString from './util/toHtmlString';
 import WebpackConfigCreator from './WebpackConfigCreator';
-import getServerRender from './getServerRender';
+import getServerRenderModules from './getServerRenderModules';
 import {
   outputPublicPath,
   getGenerateScopedName,
@@ -29,7 +29,7 @@ const myApp = {
   staticPath: '/',
 };
 
-export const setExpress = () => {
+export const setExpressMiddleware = () => {
   const {
     dev, compiler, app,
   } = myApp;
@@ -44,13 +44,13 @@ export const setExpress = () => {
   }
 };
 
-export default ({
+export default function ReactServerRender({
   dev,
   webpackConfig,
   app,
   ssr = true,
   staticPath,
-}) => {
+}) {
   myApp.dev = dev;
   myApp.app = app;
   myApp.ssr = ssr;
@@ -68,68 +68,25 @@ export default ({
     });
   }
 
-  setExpress();
+  setExpressMiddleware();
 };
 
-function createScriptTag(src) {
-  return `<script src=${src}></script>`;
-}
-
-function createCssTag(href) {
-  return `<link rel="stylesheet" href=${href}></script>`;
-}
-
-export const getScript = (name) => {
-  const { staticPath, dev } = myApp;
-  let manifest = {};
-
-  if (!dev) {
-    try {
-      // eslint-disable-next-line
-      manifest = require(path.resolve(cwd, './build/manifest.json'));
-    } catch (e) { log(e); }
-  }
-
-  if (!manifest[name]) {
-    return createScriptTag(`${staticPath}${name}.js`);
-  } else if (Array.isArray(manifest[name])) {
-    return createScriptTag(`${staticPath}${manifest[name][0]}`);
-  }
-  return createScriptTag(`${staticPath}${manifest[name]}`);
-};
-
-export const getCss = (name) => {
-  const { staticPath, dev } = myApp;
-  let manifest = {};
-
-  if (!dev) {
-    try {
-      // eslint-disable-next-line
-      manifest = require(path.resolve(cwd, './build/manifest.json'));
-    } catch (e) { log(e); }
-  }
-
-  if (manifest[name] && Array.isArray(manifest[name])) {
-    return createCssTag(`${staticPath}${manifest[name][1]}`);
-  }
-  return '';
-};
-
-export const ReactServerRenderRouter = (pathname = null, entry = 'app') => {
+/**
+ * express router for react server render
+ *
+ * @param {string=} pathname - express router path
+ * @param {string=} entry - webpack entry name
+ * @param {string=} view - view file name with file suffix, like 'index.html'
+ * @public
+ */
+export const ReactServerRenderRouter = (pathname = null, entry = 'app', view = '') => {
   const {
-    dev, app, ssr,
+    dev, app, ssr, staticPath,
   } = myApp;
 
   // Anything else gets passed to the client app's server rendering
   app.get(pathname || '*', (req, res, next) => {
-    // TODO:: programmically find server render file
-    // eslint-disable-next-line
-    // const { reducers, routes } = require(dev ? path.resolve(cwd, './src/client/server-render') : path.resolve(cwd, './build/client/server-render'));
-
-    const { reducers, routes } = getServerRender(dev);
-
-    let html = '';
-    let page = '';
+    const { reducers, routes } = getServerRenderModules(dev);
 
     if (ssr && req) {
       getRootComponent({
@@ -142,57 +99,28 @@ export const ReactServerRenderRouter = (pathname = null, entry = 'app') => {
           component, store, CMPSSR,
         }) => {
           const preloadState = store.getState();
-
-          const titleString = preloadState.html ? preloadState.html.title : '';
-          const metaString = preloadState.html ? preloadState.html.meta : '';
-          const linkString = preloadState.html ? preloadState.html.link : '';
-          const headerString = preloadState.html ? preloadState.html.header : '';
-          const footerString = preloadState.html ? preloadState.html.footer : '';
+          const keyValues = preloadState.html || {};
 
           if (req.query.SSR_JSON) {
-            if (preloadState.html && preloadState.html.title) {
-              preloadState.html = { title: preloadState.html.title };
-            } else {
-              preloadState.html = {};
-            }
+            // delete html ecsapt title for traffic optimization
+            preloadState.html = {
+              title: keyValues.title || '',
+            };
 
             res.json(preloadState);
             return;
           }
 
-          page = toHtmlString(CMPSSR ? renderToStaticMarkup(component) : '');
+          const page = toHtmlString({
+            markup: CMPSSR ? renderToStaticMarkup(component) : '',
+            view,
+            keyValues,
+            dev,
+            entry,
+            staticPath,
+          });
 
-          html = page
-            .replace(
-              '<!-- TITLE -->',
-              titleString || '',
-            )
-            .replace(
-              '<!-- META -->',
-              metaString || '',
-            )
-            .replace(
-              '<!-- LINK -->',
-              linkString || '',
-            )
-            .replace(
-              '<!-- HEADERHTML -->',
-              headerString || '',
-            )
-            .replace(
-              '<!-- FOOTERHTML -->',
-              footerString || '',
-            )
-            .replace(
-              '<!-- STYLESHEET -->',
-              getCss('vendor') + getCss(entry),
-            )
-            .replace(
-              '<!-- JAVASCRIPT -->',
-              getScript('vendor') + getScript(entry),
-            );
-
-          res.send(html);
+          res.send(page);
         })
         .catch((error) => {
           next(error);
@@ -200,43 +128,19 @@ export const ReactServerRenderRouter = (pathname = null, entry = 'app') => {
     } else if (req && req.query.SSR_JSON) {
       res.json({});
     } else {
-      page = toHtmlString();
+      const page = toHtmlString({
+        view,
+        dev,
+        entry,
+        staticPath,
+      });
 
-      html = page
-        .replace(
-          '<!-- TITLE -->',
-          '',
-        )
-        .replace(
-          '<!-- META -->',
-          '',
-        )
-        .replace(
-          '<!-- LINK -->',
-          '',
-        )
-        .replace(
-          '<!-- HEADERHTML -->',
-          '',
-        )
-        .replace(
-          '<!-- FOOTERHTML -->',
-          '',
-        )
-        .replace(
-          '<!-- STYLESHEET -->',
-          getCss('vendor') + getCss(entry),
-        )
-        .replace(
-          '<!-- JAVASCRIPT -->',
-          getScript('vendor') + getScript(entry),
-        );
-
-      res.send(html);
+      res.send(page);
     }
   });
 };
 
+// watch files and hot reload when dev
 export const ReactServerRenderWatch = () => {
   const {
     dev, compiler, ssr,
@@ -255,8 +159,7 @@ export const ReactServerRenderWatch = () => {
         if (!/^src[/\\]client/.test(pathname)) {
           log(`Clearing ${pathname} module cache from server`);
 
-          delete require.cache[`${cwd}/${pathname}`];
-          delete require.cache[`${cwd}\${pathname}`];
+          delete require.cache[path.resolve(pathname)];
         }
       });
     });

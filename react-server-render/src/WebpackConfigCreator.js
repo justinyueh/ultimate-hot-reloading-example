@@ -73,7 +73,7 @@ export default class WebpackConfigCreator {
       //   ].concat(!dev ? [] : 'webpack-hot-middleware/client'),
       // },
       output: {
-        path: path.resolve(cwd, './dist/assets/'),
+        path: path.resolve('dist/assets/'),
         filename: getGenerateOutputFileName(dev),
         publicPath: outputPublicPath,
       },
@@ -110,7 +110,7 @@ export default class WebpackConfigCreator {
             test: /\.jsx?$/,
             // loader: 'babel-loader',
             exclude: [
-              path.resolve(cwd, './node_modules'),
+              path.resolve('node_modules'),
             ],
             use: {
               loader: 'babel-loader',
@@ -121,6 +121,7 @@ export default class WebpackConfigCreator {
                   'transform-decorators-legacy',
                   'transform-object-rest-spread',
                   'transform-runtime',
+                  'syntax-dynamic-import',
                   'react-hot-loader/babel',
                 ],
               },
@@ -132,7 +133,7 @@ export default class WebpackConfigCreator {
           {
             test: /\.css$/,
             exclude: [
-              path.resolve(cwd, './node_modules'),
+              path.resolve('node_modules'),
             ],
             // include: path.join(__dirname, 'client'),
             use: ExtractTextPlugin.extract({

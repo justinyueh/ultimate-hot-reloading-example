@@ -2,12 +2,10 @@
 const path = require('path');
 const childProcess = require('child_process');
 
-const cwd = process.cwd();
-
 const parsedArgs = [
-  path.resolve(cwd, './node_modules/babel-cli/lib/_babel-node'),
+  path.resolve('node_modules/babel-cli/lib/_babel-node'),
   '--presets=env,react',
-  '--plugins=transform-class-properties,transform-decorators-legacy,transform-object-rest-spread,transform-runtime,react-hot-loader/babel',
+  '--plugins=transform-class-properties,transform-decorators-legacy,transform-object-rest-spread,transform-runtime,dynamic-import-node,react-hot-loader/babel',
   'src/server.js',
 ];
 

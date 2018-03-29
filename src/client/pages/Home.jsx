@@ -10,6 +10,7 @@ import { incrementAction } from '../actions/count';
 import {
   getHeaderAction,
   getFooterAction,
+  getTittleAction,
 } from '../actions/html';
 
 import img from './img.png';
@@ -18,27 +19,45 @@ import img from './img.png';
 @hot(module)
 export default class Home extends React.Component {
   /**
-    * @dispatch store.dispatch
-    * @params params from url '/:id/:name' {id: xxx, name: xxx}
-    * @queryParams params from location.search '/?name=xxx' {name: xxx}
-    */
-  // eslint-disable-next-line no-unused-vars
-  static async getInitialProps(dispatch, params, queryParams) {
-    await dispatch(getHeaderAction());
-    await dispatch(getFooterAction());
-    await dispatch(incrementAction(2));
-    await dispatch(incrementAction(4));
+   * Get initial props for both ssr and client side.
+   * @async
+   * @static
+   * @param {Function} dispatch - store.dispatch
+   * @param {Object} params - from url, '/:id/:name' {id: xxx, name: xxx}
+   * @param {Object} queryParams - location.search '/?name=xxx' {name: xxx}
+   * @param {boolean} isClient - client or server environment
+   */
+  static async getInitialProps({
+    // eslint-disable-next-line no-unused-vars
+    dispatch, params, queryParams, isClient,
+  }) {
+    if (!isClient) {
+      await dispatch(getHeaderAction());
+      await dispatch(getFooterAction());
+    }
+
+    if (isClient) {
+      await dispatch(incrementAction(2));
+      await dispatch(incrementAction(4));
+    }
+
+    await dispatch(getTittleAction());
+
+    const test = await import('../components/test');
+    test.default();
 
     return null;
   }
 
   /**
    * whether server render, default true
+   * @static
    */
   // static CMPSSR = true;
 
   /**
    * whether server render cache, default false
+   * @static
    */
   static SSRCACHE() {
     return true;
@@ -59,12 +78,15 @@ export default class Home extends React.Component {
   componentDidMount() {
     const { dispatch, match: { params } } = this.props;
 
-    Home.getInitialProps(dispatch, params, {})
+    Home.getInitialProps({
+      dispatch, params, queryParams: {}, isClient: true,
+    })
       .then(() => {
         dispatch((dispatch1, getState) => {
           console.log('number', getState().count.number);
         });
       });
+
   }
 
   render() {

@@ -1,8 +1,6 @@
 import path from 'path';
 import fs from 'fs';
 
-const cwd = process.cwd();
-
 export default class ManifestPlugin {
   // eslint-disable-next-line class-methods-use-this
   apply(compiler) {
@@ -16,9 +14,9 @@ export default class ManifestPlugin {
         }
       });
 
-      fs.mkdir(path.resolve(cwd, './build/'), () => {
+      fs.mkdir(path.resolve('build/'), () => {
         fs.writeFileSync(
-          path.resolve(cwd, './build/manifest.json'),
+          path.resolve('build/manifest.json'),
           JSON.stringify(assetsByChunkName, null, 2),
         );
       });

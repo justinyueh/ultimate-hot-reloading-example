@@ -39,8 +39,9 @@ app.use((req, res, next) => {
 });
 
 // path, entry point name
-ReactServerRenderRouter('/about', 'app111');
+ReactServerRenderRouter('/about', 'app111', 'index.html');
+
 // path, entry point name
-ReactServerRenderRouter('*', 'app');
+ReactServerRenderRouter('*', 'app', 'index.html');
 
 ReactServerRenderListen(port);

@@ -8,7 +8,7 @@ program.parse(process.argv);
 const cwd = process.cwd();
 
 const parsedArgs = [
-  path.resolve(cwd, './node_modules/eslint/bin/eslint'),
+  path.resolve('node_modules/eslint/bin/eslint'),
   '--config',
   path.join(__dirname, '../lib/eslintrc.json'),
   '--ignore-path',

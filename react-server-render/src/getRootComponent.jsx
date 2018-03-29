@@ -33,10 +33,14 @@ export const getMathedPageComponent = (req, routes) => {
   return { component: matchedComponent, params: matchedParams };
 };
 
-function getInitialProps(component, dispatch, params, queryParams) {
+function getInitialProps({
+  component, dispatch, params, queryParams, isClient,
+}) {
   return new Promise((resolve) => {
     if (component && component.getInitialProps) {
-      component.getInitialProps(dispatch, params, queryParams)
+      component.getInitialProps({
+        dispatch, params, queryParams, isClient,
+      })
         .then(() => {
           resolve();
         })
@@ -50,12 +54,12 @@ function getInitialProps(component, dispatch, params, queryParams) {
   });
 }
 
-export default async ({
+export default async function getRootComponent({
   ssr,
   req,
   reducers,
   routes,
-}) => {
+}) {
   const Routes = (
     <Switch>
       {
@@ -80,8 +84,17 @@ export default async ({
     const { component, params } = getMathedPageComponent(req, routes);
     const queryParams = req.query;
 
+    // client or server environment
+    const isClient = false;
+
     if (component && component.getInitialProps) {
-      await getInitialProps(component, store.dispatch, params, queryParams);
+      await getInitialProps({
+        component,
+        dispatch: store.dispatch,
+        params,
+        queryParams,
+        isClient,
+      });
     }
 
     return {

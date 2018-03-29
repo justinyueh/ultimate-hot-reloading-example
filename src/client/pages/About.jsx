@@ -12,12 +12,18 @@ import { incrementAction } from '../actions/count';
 @hot(module)
 export default class About extends React.Component {
   /**
-    * @dispatch store.dispatch
-    * @params params from url '/:id/:name' {id: xxx, name: xxx}
-    * @queryParams params from location.search '/?name=xxx' {name: xxx}
-    */
-  // eslint-disable-next-line no-unused-vars
-  static async getInitialProps(dispatch, params, queryParams) {
+   * Get initial props for both ssr and client side.
+   * @async
+   * @static
+   * @param {Function} dispatch - store.dispatch
+   * @param {Object} params - from url, '/:id/:name' {id: xxx, name: xxx}
+   * @param {Object} queryParams - location.search '/?name=xxx' {name: xxx}
+   * @param {boolean} isClient - client or server environment
+   */
+  static async getInitialProps({
+    // eslint-disable-next-line no-unused-vars
+    dispatch, params, queryParams, isClient,
+  }) {
     await dispatch(incrementAction(2));
     await dispatch(incrementAction(4));
 
@@ -26,6 +32,7 @@ export default class About extends React.Component {
 
   /**
    * whether server render, default true
+   * @static
    */
   static CMPSSR = true;
 
@@ -45,7 +52,9 @@ export default class About extends React.Component {
     const { dispatch, match: { params } } = this.props;
     const queryParams = {};
 
-    About.getInitialProps(dispatch, params, queryParams)
+    About.getInitialProps({
+      dispatch, params, queryParams, isClient: true,
+    })
       .then(() => {
         dispatch((dispatch1, getState) => {
           console.log('number', getState().count.number);

@@ -2,12 +2,10 @@
 const path = require('path');
 const childProcess = require('child_process');
 
-const cwd = process.cwd();
-
 const parsedArgs = [
-  `${cwd}/node_modules/babel-cli/lib/_babel-node`,
+  path.resolve('node_modules/babel-cli/lib/_babel-node'),
   '--presets=env',
-  path.resolve(__dirname, '../lib/build.js'),
+  path.resolve(__dirname, '../lib/build/build.js'),
 ];
 
 const proc = childProcess.spawn(process.argv[0], parsedArgs, {

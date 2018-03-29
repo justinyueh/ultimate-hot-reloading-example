@@ -1,18 +1,16 @@
-const template = `
+<!DOCTYPE html>
 <html>
   <head>
+    <meta charset="UTF-8">
     <title><!-- TITLE --></title>
     <!-- META -->
     <!-- LINK -->
     <!-- STYLESHEET -->
   </head>
   <body>
-    <!-- HEADERHTML -->
+    <!-- HEADER -->
     <div id="root"><!-- CONTENT --></div>
-    <!-- FOOTERHTML -->
+    <!-- FOOTER -->
     <!-- JAVASCRIPT -->
   </body>
 </html>
-`;
-
-export default (string = '') => template.replace('<!-- CONTENT -->', string);

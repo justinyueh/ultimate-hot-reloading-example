@@ -5,6 +5,7 @@
     "transform-decorators-legacy",
     "transform-object-rest-spread",
     "transform-runtime",
+    "syntax-dynamic-import",
     "react-hot-loader/babel"
   ]
 }
