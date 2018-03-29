@@ -7,6 +7,7 @@ import {
   outputPublicPath,
   getGenerateScopedName,
   getGenerateOutputFileName,
+  getBabelLoaderOptions,
   fileLoaderName,
 } from './config';
 
@@ -114,17 +115,7 @@ export default class WebpackConfigCreator {
             ],
             use: {
               loader: 'babel-loader',
-              options: {
-                presets: ['env', 'react'],
-                plugins: [
-                  'transform-class-properties',
-                  'transform-decorators-legacy',
-                  'transform-object-rest-spread',
-                  'transform-runtime',
-                  'syntax-dynamic-import',
-                  'react-hot-loader/babel',
-                ],
-              },
+              options: getBabelLoaderOptions({ dev, ssr }),
             },
             // include: path.join(__dirname, '../client'),
           },
