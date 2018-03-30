@@ -13,7 +13,10 @@ export function getGenerateOutputFileName(dev) {
 
 export function getBabelLoaderOptions({ dev, ssr }) {
   const options = {
-    presets: ['env', 'react'],
+    presets: [
+      ssr ? ['env', { targets: { node: '8.9.3' }, module: false }] : 'env',
+      'react',
+    ],
     plugins: [
       'transform-class-properties',
       'transform-decorators-legacy',
@@ -23,7 +26,7 @@ export function getBabelLoaderOptions({ dev, ssr }) {
       // 'react-hot-loader/babel',
     ]
       .concat(ssr ? 'dynamic-import-node' : 'syntax-dynamic-import')
-      .concat(dev && !ssr ? 'react-hot-loader/babel' : []),
+      .concat((dev && !ssr) ? 'react-hot-loader/babel' : []),
   };
 
   return options;

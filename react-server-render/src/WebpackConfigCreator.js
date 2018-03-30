@@ -64,7 +64,15 @@ export default class WebpackConfigCreator {
     const defaultConfig = {
       mode: dev ? 'development' : 'production',
       context: cwd,
-      devtool: !dev ? false : '#eval-source-map',
+      devtool: (() => {
+        if (dev) {
+          return '#eval-source-map';
+        }
+        if (ssr) {
+          return 'source-map';
+        }
+        return false;
+      })(),
       // entry: {
       //   app: [
       //     './src/client/app.jsx',
@@ -136,6 +144,8 @@ export default class WebpackConfigCreator {
                   modules: true,
                   localIdentName: getGenerateScopedName(dev),
                   camelCase: true,
+                  minimize: !dev,
+                  sourceMap: dev,
                 },
               }, 'postcss-loader'],
             }),

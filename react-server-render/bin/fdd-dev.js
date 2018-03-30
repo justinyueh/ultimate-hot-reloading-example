@@ -1,13 +1,16 @@
 #!/usr/bin/env node
 const path = require('path');
 const childProcess = require('child_process');
+const { getBabelLoaderOptions } = require('../lib/config');
 
 process.env.npm_config_dev = true;
+
+const { plugins } = getBabelLoaderOptions({ dev: true, ssr: true });
 
 const parsedArgs = [
   path.resolve('node_modules/.bin/babel-node'),
   '--presets=env,react',
-  '--plugins=transform-class-properties,transform-decorators-legacy,transform-object-rest-spread,transform-runtime,dynamic-import-node',
+  `--plugins=${plugins.join(',')}`,
   'src/server.js',
 ];
 

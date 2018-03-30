@@ -8,7 +8,7 @@ function createScriptTag(src) {
 }
 
 function createCssTag(href) {
-  return `<link rel="stylesheet" href=${href}></link>`;
+  return `<link rel="stylesheet" href=${href}>`;
 }
 
 export function getScript(name, staticPath, dev) {
