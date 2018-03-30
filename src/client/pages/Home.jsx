@@ -84,7 +84,7 @@ export default class Home extends React.Component {
     })
       .then(() => {
         dispatch((dispatch1, getState) => {
-          console.log('number', getState().count.number);
+          console.log('get number from store', getState().count.number);
         });
       });
   }

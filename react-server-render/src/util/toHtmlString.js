@@ -24,15 +24,19 @@ const defaultTemplate = `<!DOCTYPE html>
 
 const BOM = /^\uFEFF/;
 
-export default function toHtmlString({
-  markup = '',
-  view = '',
-  keyValues = {},
-  dev = false,
-  entry = 'app',
-  staticPath = '/',
-}) {
+const isProd = process.env.NODE_ENV === 'production';
+
+// view cache for production
+const caches = {};
+
+function loadTemplate(dev, view) {
   let template = defaultTemplate;
+
+  // cache views when production
+  if (isProd && !dev && view && caches[view]) {
+    log('load page template from cache');
+    return caches[view];
+  }
 
   if (view) {
     const templateDir = dev ? 'src/views' : 'build/views';
@@ -42,12 +46,26 @@ export default function toHtmlString({
       log('load page template from %s', filePath);
 
       template = fs.readFileSync(filePath).toString().replace(BOM, '');
+      caches[view] = template;
     } else {
       log('template file `%s` not exists, load from default template', filePath);
     }
   } else {
     log('load page from default template');
   }
+
+  return template;
+}
+
+export default function toHtmlString({
+  markup = '',
+  view = '',
+  keyValues = {},
+  dev = false,
+  entry = 'app',
+  staticPath = '/',
+}) {
+  let template = loadTemplate(dev, view);
 
   Object.keys(keyValues).forEach((key) => {
     template = template.replace(`<!-- ${key.toUpperCase()} -->`, keyValues[key] || '');
