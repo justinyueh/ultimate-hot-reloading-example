@@ -11,7 +11,10 @@ import debug from 'debug';
 import getRootComponent from './getRootComponent';
 import toHtmlString from './util/toHtmlString';
 import WebpackConfigCreator from './WebpackConfigCreator';
-import getServerRenderModules from './getServerRenderModules';
+import {
+  getServerRenderModules,
+  getWebpackConfigModules,
+} from './util/getModules';
 import {
   outputPublicPath,
   getGenerateScopedName,
@@ -22,11 +25,12 @@ const log = debug('ssr');
 const cwd = process.cwd();
 
 const myApp = {
-  dev: false,
+  dev: process.env.npm_config_dev || false,
   app: null,
   compiler: null,
-  ssr: false,
+  ssr: process.env.npm_config_ssr || false,
   staticPath: '/',
+  port: process.env.npm_config_port || 3000,
 };
 
 export const setExpressMiddleware = () => {
@@ -45,19 +49,16 @@ export const setExpressMiddleware = () => {
 };
 
 export default function ReactServerRender({
-  dev,
-  webpackConfig,
   app,
-  ssr = true,
   staticPath,
 }) {
-  myApp.dev = dev;
   myApp.app = app;
-  myApp.ssr = ssr;
   myApp.staticPath = staticPath;
 
+  const { dev } = myApp;
+
   if (dev) {
-    const { getWebpackConfig } = new WebpackConfigCreator(webpackConfig);
+    const { getWebpackConfig } = new WebpackConfigCreator(getWebpackConfigModules(dev));
     myApp.compiler = webpack(getWebpackConfig({ dev: true, ssr: false }));
     // The require hook compiles CSS Modules in runtime
     cssModulesRequireHook({ generateScopedName: getGenerateScopedName(dev) });
@@ -69,7 +70,7 @@ export default function ReactServerRender({
   }
 
   setExpressMiddleware();
-};
+}
 
 /**
  * express router for react server render
@@ -79,7 +80,7 @@ export default function ReactServerRender({
  * @param {string=} view - view file name with file suffix, like 'index.html'
  * @public
  */
-export const ReactServerRenderRouter = (pathname = null, entry = 'app', view = '') => {
+export function ReactServerRenderRouter(pathname = null, entry = 'app', view = '') {
   const {
     dev, app, ssr, staticPath,
   } = myApp;
@@ -138,7 +139,7 @@ export const ReactServerRenderRouter = (pathname = null, entry = 'app', view = '
       res.send(page);
     }
   });
-};
+}
 
 // watch files and hot reload when dev
 export const ReactServerRenderWatch = () => {
@@ -179,8 +180,8 @@ export const ReactServerRenderWatch = () => {
   }
 };
 
-export const ReactServerRenderListen = (port) => {
-  const { app } = myApp;
+export const ReactServerRenderListen = () => {
+  const { app, port } = myApp;
 
   app.listen(port, (err) => {
     if (err) throw err;

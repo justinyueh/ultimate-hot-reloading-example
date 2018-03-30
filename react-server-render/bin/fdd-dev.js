@@ -2,6 +2,8 @@
 const path = require('path');
 const childProcess = require('child_process');
 
+process.env.npm_config_dev = true;
+
 const parsedArgs = [
   path.resolve('node_modules/.bin/babel-node'),
   '--presets=env,react',

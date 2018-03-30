@@ -24,14 +24,14 @@ const defaultTemplate = `<!DOCTYPE html>
 
 const BOM = /^\uFEFF/;
 
-export default ({
+export default function toHtmlString({
   markup = '',
   view = '',
   keyValues = {},
   dev = false,
   entry = 'app',
   staticPath = '/',
-}) => {
+}) {
   let template = defaultTemplate;
 
   if (view) {
@@ -64,4 +64,4 @@ export default ({
   );
 
   return template.replace('<!-- CONTENT -->', markup);
-};
+}

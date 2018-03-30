@@ -5,6 +5,10 @@
   "description": "React example",
   "author": "Glen Mailer <glen@stainlessed.co.uk>",
   "license": "MIT",
+  "config": {
+    "ssr": true,
+    "port": 3000
+  },
   "scripts": {
     "dev": "babel-node --presets=env,react --plugins=transform-class-properties,transform-decorators-legacy,transform-object-rest-spread,transform-runtime,react-hot-loader/babel src/server.js",
     "start": "babel-node build/server.js",

@@ -10,14 +10,16 @@ const cwd = process.cwd();
 const parsedArgs = [
   path.resolve('node_modules/eslint/bin/eslint'),
   '--config',
-  path.join(__dirname, '../lib/eslintrc.json'),
+  path.resolve(__dirname, '../lib/eslintrc.json'),
   '--ignore-path',
-  path.join(__dirname, '../lib/eslintignore'),
+  path.resolve(__dirname, '../lib/eslintignore'),
   '--ext',
   '.js',
   '--ext',
   '.jsx',
-  cwd,
+  path.resolve(cwd, 'src'),
+  path.resolve(cwd, 'react-server-render/bin'),
+  path.resolve(cwd, 'react-server-render/src'),
 ];
 
 const proc = childProcess.spawn(process.argv[0], parsedArgs, {

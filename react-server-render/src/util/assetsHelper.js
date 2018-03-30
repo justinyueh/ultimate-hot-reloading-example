@@ -8,10 +8,10 @@ function createScriptTag(src) {
 }
 
 function createCssTag(href) {
-  return `<link rel="stylesheet" href=${href}></script>`;
+  return `<link rel="stylesheet" href=${href}></link>`;
 }
 
-export const getScript = (name, staticPath, dev) => {
+export function getScript(name, staticPath, dev) {
   let manifest = {};
 
   if (!dev) {
@@ -27,9 +27,9 @@ export const getScript = (name, staticPath, dev) => {
     return createScriptTag(`${staticPath}${manifest[name][0]}`);
   }
   return createScriptTag(`${staticPath}${manifest[name]}`);
-};
+}
 
-export const getCss = (name, staticPath, dev) => {
+export function getCss(name, staticPath, dev) {
   let manifest = {};
 
   if (!dev) {
@@ -43,4 +43,4 @@ export const getCss = (name, staticPath, dev) => {
     return createCssTag(`${staticPath}${manifest[name][1]}`);
   }
   return '';
-};
+}

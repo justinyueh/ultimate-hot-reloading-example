@@ -155,4 +155,4 @@ export default async function getRootComponent({
     store,
     params: {},
   };
-};
+}

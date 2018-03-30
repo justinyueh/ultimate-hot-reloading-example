@@ -43,6 +43,7 @@ export default class Home extends React.Component {
 
     await dispatch(getTittleAction());
 
+    // test dynamic import
     const test = await import('../components/test');
     test.default();
 
@@ -86,7 +87,6 @@ export default class Home extends React.Component {
           console.log('number', getState().count.number);
         });
       });
-
   }
 
   render() {

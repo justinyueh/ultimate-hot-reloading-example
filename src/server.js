@@ -5,27 +5,11 @@ import ReactServerRender, {
   ReactServerRenderListen,
 } from '../react-server-render/lib';
 
-import webpackConfig from './webpack.config';
-
-const port = 3000;
-
-// 是否开发环境
-const dev = true;
-
-// 服务端渲染总开关, default true
-const ssr = true;
-
 // 静态资源前缀，包括域名和path
 const staticPath = '/assets/';
 const app = express();
 
-ReactServerRender({
-  dev,
-  webpackConfig,
-  app,
-  ssr,
-  staticPath,
-});
+ReactServerRender({ app, staticPath });
 
 app.use(express.static('./dist/'));
 
@@ -44,4 +28,4 @@ ReactServerRenderRouter('/about', 'app111', 'index.html');
 // path, entry point name
 ReactServerRenderRouter('*', 'app', 'index.html');
 
-ReactServerRenderListen(port);
+ReactServerRenderListen();

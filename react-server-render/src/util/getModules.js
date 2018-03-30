@@ -8,7 +8,11 @@ function _interopRequireDefault(obj) {
   };
 }
 
-export default function getServerRenderModules(dev) {
+/**
+ * Import reducers and routes
+ * @param {Boolean} dev
+ */
+export function getServerRenderModules(dev) {
   let reducers;
   let routes;
   if (dev) {
@@ -30,4 +34,23 @@ export default function getServerRenderModules(dev) {
   }
 
   return { reducers, routes };
+}
+
+/**
+ * Import webpack.config.js
+ * @param {Boolean} dev
+ */
+export function getWebpackConfigModules(dev) {
+  let webpackConfig;
+  if (dev) {
+    // eslint-disable-next-line
+    const _webpackConfig = require(path.resolve('src/webpack.config.js'));
+    webpackConfig = _interopRequireDefault(_webpackConfig).default;
+  } else {
+    // eslint-disable-next-line
+    const _webpackConfig = require(path.resolve('build/webpack.config.js'));
+    webpackConfig = _interopRequireDefault(_webpackConfig).default;
+  }
+
+  return webpackConfig;
 }
