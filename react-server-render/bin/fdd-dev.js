@@ -3,7 +3,7 @@ const path = require('path');
 const childProcess = require('child_process');
 const { getBabelLoaderOptions } = require('../lib/config');
 
-process.env.npm_config_dev = true;
+process.env.npm_package_config_dev = true;
 
 const { plugins } = getBabelLoaderOptions({ dev: true, ssr: true });
 

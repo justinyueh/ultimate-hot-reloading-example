@@ -31,3 +31,16 @@ export function getBabelLoaderOptions({ dev, ssr }) {
 
   return options;
 }
+
+export function getExtractTextPluginFileName(dev) {
+  return dev ? '[name].css' : '[name]-[contenthash].css';
+}
+
+export function getEnvConfig() {
+  return {
+    dev: (process.env.npm_package_config_dev === 'true') || false,
+    ssr: (process.env.npm_package_config_ssr !== 'false') || false,
+    port: process.env.npm_package_config_port || 3000,
+    babelOutDir: '.fdd',
+  };
+}

@@ -1,5 +1,8 @@
 import path from 'path';
 import debug from 'debug';
+import { getEnvConfig } from '../config';
+
+const { babelOutDir } = getEnvConfig();
 
 const log = debug('ssr:assetshelper');
 
@@ -17,7 +20,7 @@ export function getScript(name, staticPath, dev) {
   if (!dev) {
     try {
       // eslint-disable-next-line
-      manifest = require(path.resolve('build/manifest.json'));
+      manifest = require(path.resolve(`${babelOutDir}/manifest.json`));
     } catch (e) { log(e); }
   }
 
@@ -35,7 +38,7 @@ export function getCss(name, staticPath, dev) {
   if (!dev) {
     try {
       // eslint-disable-next-line
-      manifest = require(path.resolve('build/manifest.json'));
+      manifest = require(path.resolve(`${babelOutDir}/manifest.json`));
     } catch (e) { log(e); }
   }
 

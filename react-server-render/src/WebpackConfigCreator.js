@@ -7,6 +7,7 @@ import {
   outputPublicPath,
   getGenerateScopedName,
   getGenerateOutputFileName,
+  getExtractTextPluginFileName,
   getBabelLoaderOptions,
   fileLoaderName,
 } from './config';
@@ -88,7 +89,7 @@ export default class WebpackConfigCreator {
       },
       plugins: [
         new ExtractTextPlugin({
-          filename: '[name]-[contenthash].css',
+          filename: getExtractTextPluginFileName(dev),
           disable: dev,
         }),
       ]

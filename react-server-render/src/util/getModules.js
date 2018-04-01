@@ -1,4 +1,7 @@
 import path from 'path';
+import { getEnvConfig } from '../config';
+
+const { babelOutDir } = getEnvConfig();
 
 // eslint-disable-next-line no-underscore-dangle
 function _interopRequireDefault(obj) {
@@ -25,11 +28,11 @@ export function getServerRenderModules(dev) {
     routes = _interopRequireDefault(_routes).default;
   } else {
     // eslint-disable-next-line
-    const _reducers = require(path.resolve('build/client/reducers.js'));
+    const _reducers = require(path.resolve(`${babelOutDir}/client/reducers.js`));
     reducers = _interopRequireDefault(_reducers).default;
 
     // eslint-disable-next-line
-    const _routes = require(path.resolve('build/client/routes.js'));
+    const _routes = require(path.resolve(`${babelOutDir}/client/routes.js`));
     routes = _interopRequireDefault(_routes).default;
   }
 
@@ -48,7 +51,7 @@ export function getWebpackConfigModules(dev) {
     webpackConfig = _interopRequireDefault(_webpackConfig).default;
   } else {
     // eslint-disable-next-line
-    const _webpackConfig = require(path.resolve('build/webpack.config.js'));
+    const _webpackConfig = require(path.resolve(`${babelOutDir}/webpack.config.js`));
     webpackConfig = _interopRequireDefault(_webpackConfig).default;
   }
 

@@ -19,18 +19,20 @@ import {
   outputPublicPath,
   getGenerateScopedName,
   fileLoaderName,
+  getEnvConfig,
 } from './config';
 
+const envConfig = getEnvConfig();
 const log = debug('ssr');
 const cwd = process.cwd();
 
 const myApp = {
-  dev: process.env.npm_config_dev || false,
+  dev: envConfig.dev,
   app: null,
   compiler: null,
-  ssr: process.env.npm_config_ssr || false,
+  ssr: envConfig.ssr,
   staticPath: '/',
-  port: process.env.npm_config_port || 3000,
+  port: envConfig.port,
 };
 
 export const setExpressMiddleware = () => {

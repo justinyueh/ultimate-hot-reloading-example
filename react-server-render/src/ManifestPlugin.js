@@ -1,5 +1,8 @@
 import path from 'path';
 import fs from 'fs';
+import { getEnvConfig } from './config';
+
+const { babelOutDir } = getEnvConfig();
 
 export default class ManifestPlugin {
   // eslint-disable-next-line class-methods-use-this
@@ -14,9 +17,9 @@ export default class ManifestPlugin {
         }
       });
 
-      fs.mkdir(path.resolve('build/'), () => {
+      fs.mkdir(path.resolve(babelOutDir), () => {
         fs.writeFileSync(
-          path.resolve('build/manifest.json'),
+          path.resolve(`${babelOutDir}/manifest.json`),
           JSON.stringify(assetsByChunkName, null, 2),
         );
       });

@@ -10,14 +10,10 @@
     "port": 3000
   },
   "scripts": {
-    "dev": "babel-node --presets=env,react --plugins=transform-class-properties,transform-decorators-legacy,transform-object-rest-spread,transform-runtime,react-hot-loader/babel src/server.js",
-    "start": "babel-node build/server.js",
-    "build": "babel-node --presets=env src/webpack/build.js",
-    "lint": "eslint . --ext .js --ext .jsx",
-    "fdd-dev": "react-server-render/bin/fdd-dev.js",
-    "fdd-start": "react-server-render/bin/fdd-start.js",
-    "fdd-build": "react-server-render/bin/fdd-build.js",
-    "fdd-lint": "react-server-render/bin/fdd-lint.js",
+    "dev": "react-server-render/bin/fdd-dev.js",
+    "lint": "react-server-render/bin/fdd-lint.js",
+    "build": "react-server-render/bin/fdd-build.js",
+    "start": "react-server-render/bin/fdd-start.js",
     "rsr": "babel react-server-render/src --out-dir react-server-render/lib  --presets=env,react --plugins=transform-class-properties,transform-decorators-legacy,transform-object-rest-spread,transform-runtime --copy-files --watch"
   },
   "dependencies": {
@@ -37,11 +33,14 @@
     "debug": "^3.1.0",
     "express": "^4.16.3",
     "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "fs-readdir-recursive": "^1.1.0",
     "history": "^4.7.2",
+    "lodash": "^4.17.5",
+    "output-file-sync": "^2.0.1",
     "prop-types": "^15.6.1",
     "querystring": "^0.2.0",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "react": "^16.3.0",
+    "react-dom": "^16.3.0",
     "react-hot-loader": "^4.0.0",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
@@ -49,8 +48,9 @@
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
     "remove": "^0.1.5",
-    "webpack": "^4.2.0",
-    "webpack-dev-middleware": "^3.0.1",
+    "slash": "^2.0.0",
+    "webpack": "4.2.0",
+    "webpack-dev-middleware": "^3.1.0",
     "webpack-hot-middleware": "^2.21.2",
     "webpack-node-externals": "^1.6.0"
   },
@@ -64,7 +64,7 @@
     "css-loader": "^0.28.11",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
-    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-import": "^2.10.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.7.0",
     "file-loader": "^1.1.11",
@@ -75,8 +75,8 @@
   },
   "bin": {
     "fdd-dev": "react-server-render/bin/fdd-dev.js",
-    "fdd-start": "react-server-render/bin/fdd-start.js",
+    "fdd-lint": "react-server-render/bin/fdd-lint.js",
     "fdd-build": "react-server-render/bin/fdd-build.js",
-    "fdd-lint": "react-server-render/bin/fdd-lint.js"
+    "fdd-start": "react-server-render/bin/fdd-start.js"
   }
 }
