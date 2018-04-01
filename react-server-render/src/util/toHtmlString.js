@@ -3,6 +3,9 @@ import fs from 'fs';
 import debug from 'debug';
 
 import { getScript, getCss } from './assetsHelper';
+import { getEnvConfig } from '../config';
+
+const { babelOutDir } = getEnvConfig();
 
 const log = debug('ssr:tohtmlstring');
 
@@ -39,7 +42,7 @@ function loadTemplate(dev, view) {
   }
 
   if (view) {
-    const templateDir = dev ? 'src/views' : 'build/views';
+    const templateDir = dev ? 'src/views' : `${babelOutDir}/views`;
     const filePath = path.resolve(templateDir, view);
 
     if (fs.existsSync(filePath)) {

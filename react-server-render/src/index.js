@@ -31,7 +31,7 @@ const myApp = {
   app: null,
   compiler: null,
   ssr: envConfig.ssr,
-  staticPath: '/',
+  staticPath: envConfig.staticPath,
   port: envConfig.port,
 };
 
@@ -50,12 +50,8 @@ export const setExpressMiddleware = () => {
   }
 };
 
-export default function ReactServerRender({
-  app,
-  staticPath,
-}) {
+export default function ReactServerRender({ app }) {
   myApp.app = app;
-  myApp.staticPath = staticPath;
 
   const { dev } = myApp;
 

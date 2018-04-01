@@ -5,11 +5,9 @@ import ReactServerRender, {
   ReactServerRenderListen,
 } from '../react-server-render/lib';
 
-// 静态资源前缀，包括域名和path
-const staticPath = '/assets/';
 const app = express();
 
-ReactServerRender({ app, staticPath });
+ReactServerRender({ app });
 
 app.use(express.static('./dist/'));
 

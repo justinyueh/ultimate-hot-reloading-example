@@ -37,10 +37,20 @@ export function getExtractTextPluginFileName(dev) {
 }
 
 export function getEnvConfig() {
+  const dev = (process.env.npm_package_config_dev === 'true') || false;
+
+  // 静态资源前缀，包括域名和path
+  let staticPath = process.env.npm_package_config_staticPath || '/assets/';
+
+  if (!dev && process.env.npm_package_config_staticPathProduction) {
+    staticPath = process.env.npm_package_config_staticPathProduction;
+  }
+
   return {
-    dev: (process.env.npm_package_config_dev === 'true') || false,
+    dev,
     ssr: (process.env.npm_package_config_ssr !== 'false') || false,
     port: process.env.npm_package_config_port || 3000,
     babelOutDir: '.fdd',
+    staticPath,
   };
 }
